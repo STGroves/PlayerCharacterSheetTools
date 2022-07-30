@@ -12,6 +12,7 @@
     "postbuild": "npm run format",
     "upload": "npx clasp push",
     "deploy": "npm run build && npm run upload",
+    "gitDeploy": "npm run deploy && git add . && git commit && git push origin master",
     "test": "jest"
   },
   "repository": {

@@ -1,13 +1,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alice&display=swap" rel="stylesheet">
-<?!= include("BlockNode_*_CSS") ?>
-<?!= include("ContextMenu_CSS") ?>
-<body onload="loadEditor()" data-transparentElement="true">
+<link rel="stylesheet" href="https://github.com/STGroves/PlayerCharacterSheetTools/blob/master/src/External/BlockNode/CSS/CSS.css">
+<link rel="stylesheet" href="https://github.com/STGroves/PlayerCharacterSheetTools/blob/master/src/External/ContextMenu/CSS/CSS.css">
+<body data-transparentElement="true">
   <div class="overlay"></div>
 </body>
 <script src="https://github.com/STGroves/PlayerCharacterSheetTools/blob/master/src/External/ClassExtension/ClassExtension.js"/>
-<?!= include("Draggable_*Index_JS") ?>
+<?!= include("Draggable_Index") ?>
 <?!= include("ContextMenu_*Index_JS") ?>
 <?!= include("BlockNode_*_Index_JS") ?>
 <?!= include("MacroEditor_*_Index_JS") ?>

@@ -4,7 +4,7 @@ import ClassExtension from '../../ClassExtension/ClassExtension';
 import Vector from '../../Vector';
 import Extensions from '../../Extensions';
 import BlockNode from './Nodes/BlockNode';
-import ContextMenu from '../../ContextMenu';
+import CM from '../../ContextMenu/index';
 
 // TO-DO: Create Menu Window (Window class?)
 export default class NodeCanvas extends DraggableElement {
@@ -189,13 +189,13 @@ export default class NodeCanvas extends DraggableElement {
     const PROT_GET = this.#protObj.get;
     const ELEMENTS = PROT_GET('createContextMenuElements').next().value;
 
-    this.#protObj.set('contextMenu', new ContextMenu('Nodes'));
+    this.#protObj.set('contextMenu', new CM.ContextMenu('Nodes'));
 
     ELEMENTS.forEach((elem) => {
       PROT_GET('contextMenu').addElement(elem);
     });
 
-    ContextMenu.Scope = PROT_GET('rootElement');
+    CM.ContextMenu.Scope = PROT_GET('rootElement');
   }
 
   #createMenu(evt) {

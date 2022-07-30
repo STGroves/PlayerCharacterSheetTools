@@ -34,7 +34,7 @@ function showDiceRoller_() {
 }
 
 function macroEditor_() {
-  const html = HtmlService.createTemplateFromFile('ME_Index')
+  const html = HtmlService.createTemplateFromFile('MacroEditor_Index')
     .evaluate()
     .setWidth(1000)
     .setHeight(1000)

@@ -4,4 +4,4 @@ import CMLabel from './JS/Elements/CMLabel';
 import CMSeparator from './JS/Elements/CMSeparator';
 import CMSubMenu from './JS/Elements/CMSubMenu';
 
-export { ContextMenu, CMButton, CMLabel, CMSeparator, CMSubMenu };
+export default { ContextMenu, CMButton, CMLabel, CMSeparator, CMSubMenu };

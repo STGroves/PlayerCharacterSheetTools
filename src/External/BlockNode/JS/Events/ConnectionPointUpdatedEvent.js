@@ -1,12 +1,14 @@
-class ConnectionPointUpdatedEvent extends Event {
+import ConnectionPoint from '../Nodes/ConnectionPoint';
+
+export default class ConnectionPointUpdatedEvent extends Event {
   static get UpdateType() {
     return {
       NODE_ADDED: 0,
       NODE_REMOVED: 1,
-      LAYOUT_CHANGE: -1
-    }
+      LAYOUT_CHANGE: -1,
+    };
   }
-  
+
   rootConnectionPoint = null;
   sourceConnectionPoint = null;
   updateType = null;
@@ -19,17 +21,16 @@ class ConnectionPointUpdatedEvent extends Event {
    * sourceConnectionPoint: ?ConnectionPoint,
    * updateType: ConnectionPointUpdatedEvent.UpdateType,
    * targetNode: BlockNode
-   * }} options 
+   * }} options
    */
-  constructor(options)
-  {
+  constructor(options) {
     super(ConnectionPoint.CONNECTIONPOINT_UPDATED);
 
     this.rootConnectionPoint = options.rootConnectionPoint;
     this.sourceConnectionPoint = options.sourceConnectionPoint || options.rootConnectionPoint;
     this.updateType = options.updateType;
-    
-    if (this.updateType != null && this.updateType != ConnectionPointUpdatedEvent.UpdateType.LAYOUT_CHANGE)
+
+    if (this.updateType != null && this.updateType !== ConnectionPointUpdatedEvent.UpdateType.LAYOUT_CHANGE)
       this.targetNode = options.targetNode || null;
   }
 }

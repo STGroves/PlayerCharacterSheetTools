@@ -1,8 +1,8 @@
-class Vector {
+export default class Vector {
   /**
    * @constructor
-   * @param {number} x 
-   * @param {number} y 
+   * @param {number} x
+   * @param {number} y
    */
   constructor(x, y) {
     this.x = Math.abs(x) < 0.000001 ? 0 : x;
@@ -35,7 +35,7 @@ class Vector {
    * @memberof Vector
    */
   get magnitude() {
-    return Math.sqrt((this.x * this.x) + (this.y * this.y));
+    return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
   /**
@@ -45,19 +45,37 @@ class Vector {
    * @static
    * @memberof Vector
    */
-  static get One() { return new Vector(1, 1); }
-  static get Zero() { return new Vector(0, 0); }
-  static get Left() { return new Vector(-1, 0); }
-  static get Right() { return new Vector(1, 0); }
-  static get Up() { return new Vector(0, -1); }
-  static get Down() { return new Vector(0, 1); }
+  static get One() {
+    return new Vector(1, 1);
+  }
+  static get Zero() {
+    return new Vector(0, 0);
+  }
+  static get Left() {
+    return new Vector(-1, 0);
+  }
+  static get Right() {
+    return new Vector(1, 0);
+  }
+  static get Up() {
+    return new Vector(0, -1);
+  }
+  static get Down() {
+    return new Vector(0, 1);
+  }
 
-  get back() { return Vector.multiply(this, -1); }
-  get left() { return new Vector(this.y * -1, this.x); }
-  get right() { return new Vector(this.y, this.x); }
+  get back() {
+    return Vector.multiply(this, -1);
+  }
+  get left() {
+    return new Vector(this.y * -1, this.x);
+  }
+  get right() {
+    return new Vector(this.y, this.x);
+  }
 
   normalize() {
-    let length = this.magnitude;
+    const length = this.magnitude;
     return new Vector(this.x / length, this.y / length);
   }
 

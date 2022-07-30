@@ -39,15 +39,16 @@
         "endOfLine": "auto"
       }
     ],
-    "lines-between-class-members": [
-      "error",
-      "none",
-      { "exceptAfterSingleLine": false }
-    ],
+    "no-plusplus": "off",
+    "lines-between-class-members": "off",
+    "no-underscore-dangle": "off",
+    "no-use-before-define": "off",
+    "no-bitwise": "off",
     "no-await-in-loop": "off",
+    "no-restricted-syntax":"off",
     "import/prefer-default-export": "off",
     "no-unused-vars": [
-      1,
+      "warn",
       {
         "ignoreRestSiblings": true,
         "argsIgnorePattern": "res|next|^err|^ignore|^_",

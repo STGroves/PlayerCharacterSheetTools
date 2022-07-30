@@ -1,5 +1,6 @@
 **/**
 !appsscript.json
+!*.html
 !*.js
-!\src\GS\*.js
-!\src\MacroEditor\GS\.*js
+.git/**
+node_modules/**

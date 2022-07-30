@@ -1,108 +1,121 @@
 const SVG_NS = 'http://www.w3.org/2000/svg';
+const Extender = (base, ...parts) => parts.reduce((allParts, part) => part(allParts), base);
 
 function getDialogSize() {
   const BODY = document.body;
   const HTML = document.documentElement;
-  
-  let HEIGHT = Math.max(BODY.scrollHeight, BODY.offsetHeight, HTML.clientHeight, HTML.scrollHeight, HTML.offsetHeight);
-  let WIDTH = Math.max(BODY.scrollWidth, BODY.offsetWidth, HTML.clientWidth, HTML.scrollWidth, HTML.offsetWidth);
 
-  return {width: WIDTH, height: HEIGHT};
+  const HEIGHT = Math.max(
+    BODY.scrollHeight,
+    BODY.offsetHeight,
+    HTML.clientHeight,
+    HTML.scrollHeight,
+    HTML.offsetHeight
+  );
+  const WIDTH = Math.max(BODY.scrollWidth, BODY.offsetWidth, HTML.clientWidth, HTML.scrollWidth, HTML.offsetWidth);
+
+  return { width: WIDTH, height: HEIGHT };
 }
 
 function findTypeInParents(target, targetType, root = null) {
-  while (target != root) {
-    target = target.parentNode;
+  let currentTarget = target;
+  while (currentTarget !== root) {
+    currentTarget = target.parentNode;
 
-    if (target == null)
-      break;
-
-    if (target.nodeName == targetType)
-      return true;
+    if (target == null) break;
+    if (target.nodeName === targetType) return true;
   }
 
   return false;
 }
 
 function deepClone(obj) {
-  let clone = {}; // the new empty object
+  const CLONE = {}; // the new empty object
+  const KEYS = obj.Keys();
 
-  // let's copy all user properties into it
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      clone[key] = user[obj];
-    }
+  for (const key in KEYS) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) CLONE[key] = obj[key];
   }
 }
 
 function createDropdownHTML(options, includeDefault = true) {
-  let dropdown = document.createElement('select');
+  const DROPDOWN = document.createElement('select');
 
   if (includeDefault) {
-    let defaultOption = document.createElement('option');
+    const DEFAULT_OPTION = document.createElement('option');
 
-    defaultOption.setAttribute("default", true);
-    defaultOption.setAttribute("selected", true);
-    defaultOption.setAttribute("hidden", true);
-    defaultOption.innerHTML = "Choose an Option...";
+    DEFAULT_OPTION.setAttribute('default', true);
+    DEFAULT_OPTION.setAttribute('selected', true);
+    DEFAULT_OPTION.setAttribute('hidden', true);
+    DEFAULT_OPTION.innerHTML = 'Choose an Option...';
 
-    dropdown.appendChild(defaultOption);
+    DROPDOWN.appendChild(DEFAULT_OPTION);
   }
 
   if (options instanceof Object) {
     options.promiseObj.then((results) => {
-      results = options.callback(results);
+      const FOUND_RESULTS = options.callback(results);
 
-      results.forEach((x) => {
-        let option = document.createElement('option');
-    
-        option.value = x;
-        option.innerHTML = x;
-    
-        dropdown.appendChild(option);
+      FOUND_RESULTS.forEach((x) => {
+        const OPTION = document.createElement('option');
+
+        OPTION.value = x;
+        OPTION.innerHTML = x;
+
+        DROPDOWN.appendChild(OPTION);
       });
     });
 
-    return dropdown;
+    return DROPDOWN;
   }
 
   options.forEach((x) => {
-    let option = document.createElement('option');
-    
-    option.value = x;
-    option.innerHTML = x;
-    
-    dropdown.appendChild(option);
+    const OPTION = document.createElement('option');
+
+    OPTION.value = x;
+    OPTION.innerHTML = x;
+
+    DROPDOWN.appendChild(OPTION);
   });
 
-  return dropdown;
+  return DROPDOWN;
 }
 
-function isWithinScope(pos, scope, html) {
+function isWithinScope(x, y, scope, html) {
   const SCOPE_RECT = scope.getBoundingClientRect();
   const HTML_RECT = html.getBoundingClientRect();
 
-  const SCOPE_OFFSET = new Vector(SCOPE_RECT.left, SCOPE_RECT.top);
-  const SCOPE_POS = Vector.subtract(pos, SCOPE_OFFSET);
-  const HTML_DIMS = new Vector(HTML_RECT.width, HTML_RECT.height);
-  const OOB = Vector.add(SCOPE_POS, HTML_DIMS);
+  const SCOPE_OFFSET = { x: SCOPE_RECT.left, y: SCOPE_RECT.top };
+  const SCOPE_POS = { x: x - SCOPE_OFFSET.x, y: y - SCOPE_OFFSET.y };
+  const HTML_DIMS = { x: HTML_RECT.width, y: HTML_RECT.height };
+  const OOB = { x: SCOPE_POS.x + HTML_DIMS.x, y: SCOPE_POS.y + HTML_DIMS.y };
 
   return OOB;
 }
 
-const CREATOR = (allParts, part) => part(allParts);
-const Extender = (base, ...parts) => parts.reduce(CREATOR, base);
+function promiseRun(func, ...args) {
+  const RUN_ARGS = Array.prototype.slice.call(args).slice(1);
 
-function promiseRun(func) {
-  let runArgs = Array.prototype.slice.call(arguments).slice(1);
-
-  return new Promise (function (resolve, reject) {
+  return new Promise((resolve, reject) => {
+    // eslint-disable-next-line no-undef
     google.script.run
-    .withSuccessHandler (function (result) {
-      resolve (result);
-    })
-    .withFailureHandler (function (error) {
-      reject (error);
-    }) [func].apply (this, runArgs) ;
+      .withSuccessHandler((result) => {
+        resolve(result);
+      })
+      .withFailureHandler((error) => {
+        reject(error);
+      })
+      [func].apply(this, RUN_ARGS);
   });
 }
+
+export default {
+  SVG_NS,
+  Extender,
+  getDialogSize,
+  findTypeInParents,
+  deepClone,
+  createDropdownHTML,
+  isWithinScope,
+  promiseRun,
+};

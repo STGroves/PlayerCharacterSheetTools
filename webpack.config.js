@@ -22,7 +22,7 @@ const getSrcPath = (filePath) => {
 module.exports = {
   mode: 'none',
   context: __dirname,
-  entry: getSrcPath('/index.js'),
+  entry: getSrcPath('index.js'),
   output: {
     filename: `code.js`,
     path: path.resolve(__dirname, 'dist'),

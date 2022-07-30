@@ -1,29 +1,35 @@
+import FunctionBlockNode from '../../../External/BlockNode/JS/Nodes/FunctionBlockNode';
+import ClassExtension from '../../../External/ClassExtension/ClassExtension';
+import BlockNode from '../../../External/BlockNode/JS/Nodes/BlockNode';
 
-  class CalculationBlockNode extends FunctionBlockNode {
-    #protObj = null;
+export default class CalculationBlockNode extends FunctionBlockNode {
+  #protObj = null;
 
-    constructor() {
-      ClassExtension.enforceFinalClass(new.target, CalculationBlockNode);
+  constructor() {
+    ClassExtension.enforceFinalClass(new.target, CalculationBlockNode);
 
-      let protObj = ClassExtension.enforceProtectedObject(new.target, CalculationBlockNode, {});
+    const PROT_OBJ = ClassExtension.enforceProtectedObject(new.target, CalculationBlockNode, {});
 
-      super("Calculation",
-            BlockNode.ValueTypes.NUMBER,
-            BlockNode.ValueTypes.TEXT,
-            [BlockNode.ValueTypes.NUMBER, BlockNode.ValueTypes.NUMBER],
-            protObj);
-            
-      this.#protObj = protObj.set("createSVG", (it) => this.#createSVG(it))
-                             .set("createStyle", (it) => this.#createStyle(it));
-    }
+    super(
+      'Calculation',
+      BlockNode.ValueTypes.NUMBER,
+      BlockNode.ValueTypes.TEXT,
+      [BlockNode.ValueTypes.NUMBER, BlockNode.ValueTypes.NUMBER],
+      PROT_OBJ
+    );
 
-    #createStyle(it) {
-      it.next();
-
-      this.#protObj.get("style").cssClass = "NUMBER";
-    }
-
-    #createSVG(it) {
-      it.next();
-    }
+    this.#protObj = PROT_OBJ.set('createSVG', (it) => CalculationBlockNode.#createSVG(it)).set('createStyle', (it) =>
+      this.#createStyle(it)
+    );
   }
+
+  #createStyle(it) {
+    it.next();
+
+    this.#protObj.get('style').cssClass = 'NUMBER';
+  }
+
+  static #createSVG(it) {
+    it.next();
+  }
+}

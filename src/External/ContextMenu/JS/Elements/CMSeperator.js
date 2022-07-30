@@ -1,18 +1,21 @@
-class CMSeparator extends CMElement {
+import ClassExtension from '../../../ClassExtension/ClassExtension';
+import CMElement from './CMElement';
+
+export default class CMSeparator extends CMElement {
   #protObj = null;
 
   constructor() {
     ClassExtension.enforceFinalClass(new.target, CMSeparator);
 
-    let protObj = ClassExtension.enforceProtectedObject(new.target, CMSeparator, {});
+    const PROT_OBJ = ClassExtension.enforceProtectedObject(new.target, CMSeparator, {});
 
-    super("hr", protObj);
-    this.#protObj = protObj.set("setCSS", () => this.#setCSS(), false);
+    super('hr', PROT_OBJ);
+    this.#protObj = PROT_OBJ.set('setCSS', () => this.#setCSS(), false);
 
-    this.#protObj.get("finalise").next();
+    this.#protObj.get('finalise').next();
   }
 
   #setCSS() {
-    this.HTML.classList.add("contextSeparator");
+    this.HTML.classList.add('contextSeparator');
   }
 }

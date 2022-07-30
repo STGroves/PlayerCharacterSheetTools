@@ -1,19 +1,19 @@
 /**
  * Provides functions to simulate class behaviour similar to C#.
  */
-class ClassExtension {
-  /** @typedef {{get: function, set: function}} ProtectedObject*/
+export default class ClassExtension {
+  /** @typedef {{get: function, set: function}} ProtectedObject */
   /**
    * Creates a new ProtectedObject.
-   * @returns 
+   * @returns
    */
   static #ProtectedObject() {
     const TAG = {
-      VAlUE: 0,
-      FUNCTION: 1
+      VALUE: 0,
+      FUNCTION: 1,
     };
 
-    let items = {};
+    const items = {};
 
     /**
      * Gets the value associated with the provided ID.
@@ -21,34 +21,34 @@ class ClassExtension {
      * @returns {any} The stored value or a ProtectedObjectIterator if the value is a function.
      */
     function get(id) {
-      if (!items.hasOwnProperty(id))
-        throw `Unable to find ${id}!`;
+      if (!Object.prototype.hasOwnProperty.call(items, id)) throw new Error(`Unable to find ${id}!`);
 
       const target = items[id];
+
+      let idx = -1;
 
       switch (target.tag) {
         case TAG.VALUE:
           return target.value;
-        
+
         case TAG.FUNCTION:
-          let idx = -1;
-          
           return {
             /** @typedef {} */
             /**
-             * 
-             * @param  {...any} params 
-             * @returns 
+             *
+             * @param  {...any} params
+             * @returns
              */
-            next: function(...params) {
+            next(...params) {
               idx++;
 
               return {
-                value: target.value[idx] == undefined ? idx : target.value[idx].apply(null, [this, params].flat()),
-                done: idx >= target.value.length
+                value: target.value[idx] === undefined ? idx : target.value[idx].apply(null, [this, params].flat()),
+                done: idx >= target.value.length,
               };
-            }
+            },
           };
+        default:
       }
 
       return items[id];
@@ -56,25 +56,25 @@ class ClassExtension {
 
     /**
      * Sets the value and associates it with the given ID.
-     * @param {string} id 
-     * @param {any} value 
-     * @param {boolean} retainPrevious 
+     * @param {string} id
+     * @param {any} value
+     * @param {boolean} retainPrevious
      * @returns {ProtectedObject} The updated ProtectedObject.
      */
     function set(id, value, retainPrevious = true) {
-      if (typeof value != "function") {
+      if (typeof value !== 'function') {
         items[id] = {
           tag: TAG.VALUE,
-          value: value
+          value,
         };
 
         return this;
       }
 
-      if (!items.hasOwnProperty(id) || !retainPrevious) {
+      if (!Object.prototype.hasOwnProperty.call(items, id) || !retainPrevious) {
         items[id] = {
           tag: TAG.FUNCTION,
-          value: [value]
+          value: [value],
         };
       } else {
         items[id].value.splice(0, 0, value);
@@ -84,12 +84,12 @@ class ClassExtension {
     }
 
     return {
-      set: set,
-      get: get,
-      items: items
+      set,
+      get,
+      items,
     };
-  };
-  
+  }
+
   /**
    * Creates a new ProtectedObject.
    * @returns {ProtectedObject}
@@ -97,19 +97,17 @@ class ClassExtension {
   static createProtectedObject() {
     return ClassExtension.#ProtectedObject();
   }
-  
+
   static enforceFinalClass(target, type) {
-    if (target !== type)
-      throw `${type} is a final class! It cannot be inherited from!`;
+    if (target !== type) throw new Error(`${type} is a final class! It cannot be inherited from!`);
   }
-  
+
   static enforceAbstractClass(target, type) {
-    if (target === type)
-      throw `${type} is an abstract class! It cannot be constructed!`;
+    if (target === type) throw new Error(`${type} is an abstract class! It cannot be constructed!`);
   }
 
   static enforceAbstractMethod(name, type) {
-    throw `${name} is an abstract method! It cannot be called from ${type}!`;
+    throw new Error(`${name} is an abstract method! It cannot be called from ${type}!`);
   }
 
   static enforceProtectedObject(target, type, reference) {

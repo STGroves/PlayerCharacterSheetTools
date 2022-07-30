@@ -1,18 +1,17 @@
+import FunctionBlockNode from '../../../External/BlockNode/JS/Nodes/FunctionBlockNode';
+import ClassExtension from '../../../External/ClassExtension/ClassExtension';
+import BlockNode from '../../../External/BlockNode/JS/Nodes/BlockNode';
 
-  class RepeatBlockNode extends FunctionBlockNode {
-    #protObj = null;
+export default class RepeatBlockNode extends FunctionBlockNode {
+  #protObj = null;
 
-    constructor() {
-      ClassExtension.enforceFinalClass(new.target, RepeatBlockNode);
+  constructor() {
+    ClassExtension.enforceFinalClass(new.target, RepeatBlockNode);
 
-      let protObj = ClassExtension.enforceProtectedObject(new.target, RepeatBlockNode, {});
+    const PROT_OBJ = ClassExtension.enforceProtectedObject(new.target, RepeatBlockNode, {});
 
-      super("Repeat",
-            BlockNode.ValueTypes.NULL,
-            null,
-            [BlockNode.ValueTypes.ALL],
-            protObj);
-            
-      this.#protObj = protObj;
-    }
+    super('Repeat', BlockNode.ValueTypes.NULL, null, [BlockNode.ValueTypes.ALL], PROT_OBJ);
+
+    this.#protObj = PROT_OBJ;
   }
+}

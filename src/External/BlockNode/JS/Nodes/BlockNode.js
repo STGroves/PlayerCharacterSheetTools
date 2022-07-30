@@ -1,19 +1,29 @@
-class BlockNode extends DraggableElement {
-  static NODE_CREATED = "onNodeCreated";
-  static NODE_ADDED = "onNodeAdded";
-  static NODE_UPDATED = "onNodeUpdated";
+import ClassExtension from '../../../ClassExtension/ClassExtension';
+import DraggableElement from '../../../Draggable/JS/Elements/DraggableElement';
+import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent';
+import ConnectionPointUpdatedEvent from '../Events/ConnectionPointUpdatedEvent';
+import Vector from '../../../Vector';
+import Rect from '../../../Rect';
+import PathCreator from '../../../PathCreator';
+import ConnectionPoint from './ConnectionPoint';
+import Extensions from '../../../Extensions';
+
+export default class BlockNode extends DraggableElement {
+  static NODE_CREATED = 'onNodeCreated';
+  static NODE_ADDED = 'onNodeAdded';
+  static NODE_UPDATED = 'onNodeUpdated';
 
   static get ToothType() {
     return {
       INSET: 1,
-      OUTSET: -1
+      OUTSET: -1,
     };
   }
 
   static get NodeMode() {
     return {
       STANDARD: 0,
-      INPUT: 1
+      INPUT: 1,
     };
   }
 
@@ -23,7 +33,7 @@ class BlockNode extends DraggableElement {
       TEXT: 2,
       NUMBER: 4,
       ARRAY: 8,
-      ALL: 15
+      ALL: 15,
     };
   }
 
@@ -34,105 +44,115 @@ class BlockNode extends DraggableElement {
 
   #protObj = null;
 
-  get SVG() { return this.#protObj.get("rootElement"); }
-  get ID() { return this.#id; }
-  get Parent() { return this.#parent; }
-  get Connection() { return this.#protObj.get("connections")[0]; }
-  get ReturnType() { return this.#protObj.get("returnType"); }
-  get Title() { return this.#protObj.get("title"); }
-  get Style() { return this.#protObj.get("style"); }
-
-  constructor(title, returnType, connectionTypes, prot = {}) {
-    ClassExtension.enforceAbstractClass(new.target, BlockNode);
-
-    let protObj = ClassExtension.enforceProtectedObject(new.target, BlockNode, prot);
-
-    let svg = document.createElementNS(SVG_NS, 'g');
-
-    super(new Rect(0,0,0,0),
-          svg,
-          {
-            allowPassThroughEvents: true,
-            manualPositionUpdate: false,
-            baseVisualElement: svg.appendChild(document.createElementNS(SVG_NS, 'path'))
-          },
-          protObj);
-
-    this.#protObj = protObj.set("returnType", returnType)
-                            .set("title", title)
-                            .set("draggableArea", CANVAS.DraggableArea)
-                            .set("connections", [null])
-                            .set("createStyle", () => this.#createStyle())
-                            .set("createSVG", () => this.#createSVG())
-                            .set("startDrag", (it, evt) => this.#startDrag(it, evt))
-                            .set("setupEvents", (it) => this.#setupEvents(it))
-                            .set("calculateHeight", () => this.#calculateHeight())
-                            .set("calculatePathConstants", () => this.#calculatePathConstants())
-                            .set("handleConnectionPointUpdate", (it, event) => this.#handleConnectionPointUpdate(event))
-                            .set("handleConnectionPointLayoutChange",
-                                (it, event) => this.#handleConnectionPointLayoutChange(event))
-                            .set("determineMouseDown", (it, evt) => this.#determineMouseDown(it, evt))
-                            .set("determineMouseUp", (it, evt) => this.#determineMouseUp(it, evt))
-                            .set("drawNode", () => this.#drawNode())
-                            .set("drawHeader", () => this.#drawHeader())
-                            .set("drawMiddle", (it, nodeData) => this.#drawMiddle(nodeData))
-                            .set("drawFooter", (it, nodeData) => this.#drawFooter(nodeData))
-                            .set("calculateTeeth", (it,
-                                                    pathObj,
-                                                    offset,
-                                                    width,
-                                                    flags,
-                                                    toothType) => this.#calculateTeeth(pathObj,
-                                                                                      offset,
-                                                                                      width,
-                                                                                      flags,
-                                                                                      toothType))
-                            .set(BlockNode.NODE_CREATED, (it, evt) => this.#onNodeCreated(evt));
-    
-    this.#connectionFlags = connectionTypes;
-    this.#mode = BlockNode.NodeMode.STANDARD;
-    this.#id = promiseRun("getUUID");
-
-    this.addEventListener(BlockNode.NODE_CREATED, event => this.#protObj.get(BlockNode.NODE_CREATED).next(event));
+  get SVG() {
+    return this.#protObj.get('rootElement');
+  }
+  get ID() {
+    return this.#id;
+  }
+  get Parent() {
+    return this.#parent;
+  }
+  get Connection() {
+    return this.#protObj.get('connections')[0];
+  }
+  get ReturnType() {
+    return this.#protObj.get('returnType');
+  }
+  get Title() {
+    return this.#protObj.get('title');
+  }
+  get Style() {
+    return this.#protObj.get('style');
   }
 
-  /***************************
-    *          Setup          *
-    ***************************/
+  constructor(canvas, title, returnType, connectionTypes, prot = {}) {
+    ClassExtension.enforceAbstractClass(new.target, BlockNode);
+
+    const PROT_OBJ = ClassExtension.enforceProtectedObject(new.target, BlockNode, prot);
+
+    const SVG = document.createElementNS(Extensions.SVG_NS, 'g');
+
+    super(
+      new Rect(0, 0, 0, 0),
+      SVG,
+      {
+        allowPassThroughEvents: true,
+        manualPositionUpdate: false,
+        baseVisualElement: SVG.appendChild(document.createElementNS(Extensions.SVG_NS, 'path')),
+      },
+      PROT_OBJ
+    );
+
+    if (canvas === null) throw new Error('Canvas cannot be null');
+
+    this.#protObj = PROT_OBJ.set('returnType', returnType)
+      .set('title', title)
+      .set('canvas', canvas)
+      .set('draggableArea', canvas.DraggableArea)
+      .set('connections', [null])
+      .set('createStyle', () => this.#createStyle())
+      .set('createSVG', () => this.#createSVG())
+      .set('startDrag', (it, evt) => this.#startDrag(it, evt))
+      .set('setupEvents', (it) => this.#setupEvents(it))
+      .set('calculateHeight', () => BlockNode.#calculateHeight())
+      .set('calculatePathConstants', () => this.#calculatePathConstants())
+      .set('handleConnectionPointUpdate', (_it, event) => this.#handleConnectionPointUpdate(event))
+      .set('handleConnectionPointLayoutChange', (_it, event) => this.#handleConnectionPointLayoutChange(event))
+      .set('determineMouseDown', (it, evt) => this.#determineMouseDown(it, evt))
+      .set('determineMouseUp', (it, evt) => this.#determineMouseUp(it, evt))
+      .set('drawNode', () => this.#drawNode())
+      .set('drawHeader', () => this.#drawHeader())
+      .set('drawMiddle', () => BlockNode.#drawMiddle())
+      .set('drawFooter', (_it, nodeData) => this.#drawFooter(nodeData))
+      .set('calculateTeeth', (_it, pathObj, offset, width, flags, toothType) =>
+        this.#calculateTeeth(pathObj, offset, width, flags, toothType)
+      )
+      .set(BlockNode.NODE_CREATED, (_it, evt) => this.#onNodeCreated(evt));
+
+    this.#connectionFlags = connectionTypes;
+    this.#id = Extensions.promiseRun('getUUID');
+
+    this.addEventListener(BlockNode.NODE_CREATED, (event) => this.#protObj.get(BlockNode.NODE_CREATED).next(event));
+  }
+
+  /* ************************* *
+   *           Setup           *
+   * ************************* */
 
   #createSVG() {
     const PROT_GET = this.#protObj.get;
 
-    const NODE_GROUP = PROT_GET("rootElement");
+    const NODE_GROUP = PROT_GET('rootElement');
 
     const OUTER_PATH = NODE_GROUP.firstChild;
-    const INNER_PATH = document.createElementNS(SVG_NS, 'path');
+    const INNER_PATH = document.createElementNS(Extensions.SVG_NS, 'path');
 
-    this.#id.then(result => {
-      NODE_GROUP.setAttributeNS(null, "id", result);
-    })
+    this.#id.then((result) => {
+      NODE_GROUP.setAttributeNS(null, 'id', result);
+    });
 
-    const STYLE = PROT_GET("style");
+    const STYLE = PROT_GET('style');
 
     OUTER_PATH.classList.add(`node_Outer`);
     INNER_PATH.classList.add(`${STYLE.cssClass}_Inner`);
 
     NODE_GROUP.appendChild(INNER_PATH);
 
-    const DRAG_GROUP = document.createElementNS(SVG_NS, 'g');
+    const DRAG_GROUP = document.createElementNS(Extensions.SVG_NS, 'g');
 
     const RADIUS = 2.5;
     const OFFSET = 7.5;
 
     for (let i = 0; i < 6; i++) {
-      const X = STYLE.padding + RADIUS + (OFFSET * (i % 2));
-      const Y = STYLE.padding + STYLE.toothDepth + RADIUS + (OFFSET * Math.floor(i / 2));
+      const X = STYLE.padding + RADIUS + OFFSET * (i % 2);
+      const Y = STYLE.padding + STYLE.toothDepth + RADIUS + OFFSET * Math.floor(i / 2);
 
-      const CIRCLE = document.createElementNS(SVG_NS, 'circle');
-      
+      const CIRCLE = document.createElementNS(Extensions.SVG_NS, 'circle');
+
       CIRCLE.setAttribute('transform', `translate(${X},${Y})`);
       CIRCLE.setAttribute('r', RADIUS);
-      
+
       CIRCLE.classList.add(`${STYLE.cssClass}_Darker`);
 
       DRAG_GROUP.appendChild(CIRCLE);
@@ -140,16 +160,16 @@ class BlockNode extends DraggableElement {
 
     NODE_GROUP.appendChild(DRAG_GROUP);
 
-    if (PROT_GET("title") != null) {
-      const TEXT = document.createElementNS(SVG_NS, 'text');
-      
+    if (PROT_GET('title') != null) {
+      const TEXT = document.createElementNS(Extensions.SVG_NS, 'text');
+
       const TOP_OFFSET = STYLE.toothDepth + STYLE.padding;
 
-      TEXT.setAttribute("x", STYLE.minWidth / 2);
-      TEXT.setAttribute("y", ((STYLE.headerHeight - TOP_OFFSET) / 2) + TOP_OFFSET);
-      TEXT.setAttributeNS(null, "alignment-baseline", "middle");
-      TEXT.setAttribute("text-anchor", "middle");
-      
+      TEXT.setAttribute('x', STYLE.minWidth / 2);
+      TEXT.setAttribute('y', (STYLE.headerHeight - TOP_OFFSET) / 2 + TOP_OFFSET);
+      TEXT.setAttributeNS(null, 'alignment-baseline', 'middle');
+      TEXT.setAttribute('text-anchor', 'middle');
+
       TEXT.classList.add(`node_Text`);
 
       NODE_GROUP.appendChild(TEXT);
@@ -157,156 +177,157 @@ class BlockNode extends DraggableElement {
   }
 
   #createStyle() {
-    this.#protObj.set("style", {
+    this.#protObj.set('style', {
       borderSize: 1,
       cornerRadius: 5,
-      
-      cssClass: "ROOT",
-      
+
+      cssClass: 'ROOT',
+
       headerHeight: 35,
       footerHeight: 20,
       minWidth: 150,
       leftOffset: 22.5,
-      
+
       padding: 5,
-      
+
       toothDepth: 5,
-      toothWidth: 10
+      toothWidth: 10,
     });
   }
 
   #createConnectionZone() {
-    if (this.#connectionFlags == null)
-      return;
-    
+    if (this.#connectionFlags == null) return;
+
     const DEFAULT_HEIGHT = 10;
 
-    const INPUT_RECT = new Rect(0, -(DEFAULT_HEIGHT / 2), this.#protObj.get("style").minWidth, DEFAULT_HEIGHT);
+    const INPUT_RECT = new Rect(0, -(DEFAULT_HEIGHT / 2), this.#protObj.get('style').minWidth, DEFAULT_HEIGHT);
 
-    this.#protObj.set("connections", [new ConnectionPoint({
-        mainID: this.#id,
-        postfix: "#CONNECTION"
-      },
-      INPUT_RECT,
-      this.#connectionFlags,
-      this,
-      ConnectionPoint.ConnectorTypes.OUTPUT)]);
+    this.#protObj.set('connections', [
+      new ConnectionPoint(
+        {
+          mainID: this.#id,
+          postfix: '#CONNECTION',
+        },
+        INPUT_RECT,
+        this.#connectionFlags,
+        this,
+        ConnectionPoint.ConnectorTypes.OUTPUT
+      ),
+    ]);
   }
 
   #setupEvents(it) {
     it.next();
 
-    this.#protObj.get("rootElement").addEventListener("contextmenu", event => event.preventDefault());
-    this.addEventListener(BlockNode.NODE_ADDED, event => this.#onNodeAdded(event));
-    this.addEventListener(BlockNode.NODE_UPDATED, event => this.#onNodeUpdated(event));
-    this.addEventListener(ConnectionPoint.CONNECTIONPOINT_UPDATED,
-                          event => this.#protObj.get("handleConnectionPointUpdate").next(event))
-    this.addEventListener(ConnectionPoint.UPDATE_CONNECTIONPOINT_LAYOUT,
-                          event => this.#protObj.get("handleConnectionPointLayoutChange").next(event))
+    this.#protObj.get('rootElement').addEventListener('contextmenu', (event) => event.preventDefault());
+    this.addEventListener(BlockNode.NODE_ADDED, (event) => this.#onNodeAdded(event));
+    this.addEventListener(BlockNode.NODE_UPDATED, (event) => this.#onNodeUpdated(event));
+    this.addEventListener(ConnectionPoint.CONNECTIONPOINT_UPDATED, (event) =>
+      this.#protObj.get('handleConnectionPointUpdate').next(event)
+    );
+    this.addEventListener(ConnectionPoint.UPDATE_CONNECTIONPOINT_LAYOUT, (event) =>
+      this.#protObj.get('handleConnectionPointLayoutChange').next(event)
+    );
   }
 
-  /****************************
-    *          Events          *
-    ****************************/
+  /* ************************** *
+   *           Events           *
+   * ************************** */
   #handleConnectionPointLayoutChange(evt) {
-    if (this == evt.rootConnectionPoint.Owner)
-      evt.offset = evt.height - evt.rootConnectionPoint.Rect.Height;
-    else
-      evt.height = evt.sourceConnectionPoint.Node.getTotalHeight();
+    const EVT = evt;
+    if (this === evt.rootConnectionPoint.Owner) EVT.offset = evt.height - evt.rootConnectionPoint.Rect.Height;
+    else EVT.height = evt.sourceConnectionPoint.Node.getTotalHeight();
 
-    evt.sourceConnectionPoint.dispatchEvent(new ConnectionPointLayoutEvent(evt));
-    
+    evt.sourceConnectionPoint.dispatchEvent(new ConnectionPointLayoutEvent(EVT));
+
     if (evt.sourceConnectionPoint.Node != null)
-      evt.sourceConnectionPoint.Node.updatePosition(Vector.add(new Vector(evt.sourceConnectionPoint.Rect.Left,
-                                                          evt.sourceConnectionPoint.Rect.Bottom),
-                                                Vector.multiply(Vector.Up, evt.sourceConnectionPoint.Node.BoundingRect.Height)));
+      evt.sourceConnectionPoint.Node.updatePosition(
+        Vector.add(
+          new Vector(evt.sourceConnectionPoint.Rect.Left, evt.sourceConnectionPoint.Rect.Bottom),
+          Vector.multiply(Vector.Up, evt.sourceConnectionPoint.Node.BoundingRect.Height)
+        )
+      );
   }
 
   findConnection(node) {
-    const CONNECTIONS = this.#protObj.get("connections");
+    const CONNECTIONS = this.#protObj.get('connections');
 
     for (let i = 0; i < CONNECTIONS.length; i++) {
-      if (CONNECTIONS[i] == null)
-        continue;
-
-      if (CONNECTIONS[i].Node == node)
-        return CONNECTIONS[i];
+      if (CONNECTIONS[i] != null && CONNECTIONS[i].Node === node) return CONNECTIONS[i];
     }
 
     return null;
   }
 
-  #handleConnectionPointUpdate(evt) {
-    if (evt.updateType == ConnectionPointUpdatedEvent.UpdateType.NODE_ADDED) {
-      evt.targetNode.updatePosition(Vector.add(new Vector(evt.rootConnectionPoint.Rect.Left,
-                                                          evt.rootConnectionPoint.Rect.Bottom),
-                                                Vector.multiply(Vector.Up, evt.targetNode.BoundingRect.Height)));
+  static #handleConnectionPointUpdate(evt) {
+    if (evt.updateType === ConnectionPointUpdatedEvent.UpdateType.NODE_ADDED) {
+      evt.targetNode.updatePosition(
+        Vector.add(
+          new Vector(evt.rootConnectionPoint.Rect.Left, evt.rootConnectionPoint.Rect.Bottom),
+          Vector.multiply(Vector.Up, evt.targetNode.BoundingRect.Height)
+        )
+      );
     }
   }
 
-  #onNodeCreated(event) {
+  #onNodeCreated() {
     const PROT_GET = this.#protObj.get;
-    
-    PROT_GET("createStyle").next();
-    PROT_GET("createSVG").next();
+
+    PROT_GET('createStyle').next();
+    PROT_GET('createSVG').next();
 
     this.#createConnectionZone();
 
-    PROT_GET("setupEvents").next();
+    PROT_GET('setupEvents').next();
   }
 
   #onNodeAdded(evt) {
     const PROT_GET = this.#protObj.get;
-    const SVG = PROT_GET("rootElement");
+    const SVG = PROT_GET('rootElement');
 
-    let details = {
+    const DETAILS = {
       position: evt.detail,
-      dimensions: new Vector(PROT_GET("style").minWidth, PROT_GET("calculateHeight").next().value),
+      dimensions: new Vector(PROT_GET('style').minWidth, PROT_GET('calculateHeight').next().value),
       recalculateConstants: true,
-      redrawNode: true
+      redrawNode: true,
     };
 
-    this.dispatchEvent(new CustomEvent(BlockNode.NODE_UPDATED, { detail: details }));
-    
-    this.#protObj.set("transform", SVG.transform.baseVal.getItem(0));
+    this.dispatchEvent(new CustomEvent(BlockNode.NODE_UPDATED, { detail: DETAILS }));
+
+    this.#protObj.set('transform', SVG.transform.baseVal.getItem(0));
   }
 
   #onNodeUpdated(evt) {
     const PROT_GET = this.#protObj.get;
 
-    if (evt.detail.position != null)
-      PROT_GET("updatePosition").next(evt.detail.position);
+    if (evt.detail.position != null) PROT_GET('updatePosition').next(evt.detail.position);
 
-    if (evt.detail.dimensions != null)
-      PROT_GET("rect").setDimensions(evt.detail.dimensions);
+    if (evt.detail.dimensions != null) PROT_GET('rect').setDimensions(evt.detail.dimensions);
 
-    if (evt.detail.recalculateOffset)
-      PROT_GET("calculateOffset").next(evt.detail.cursorPos);
+    if (evt.detail.recalculateOffset) PROT_GET('calculateOffset').next(evt.detail.cursorPos);
 
-    if (evt.detail.recalculateConstants)
-      PROT_GET("calculatePathConstants").next();
+    if (evt.detail.recalculateConstants) PROT_GET('calculatePathConstants').next();
 
-    if (evt.detail.redrawNode)
-      PROT_GET("drawNode").next();
+    if (evt.detail.redrawNode) PROT_GET('drawNode').next();
   }
 
-  /***************************************
-    *          Draggable Element          *
-    ***************************************/
+  /* ************************************* *
+   *           Draggable Element           *
+   * ************************************* */
 
   #determineMouseDown(it, evt) {
-    const TRANSPARENT = "data-transparentElement";
+    const TRANSPARENT = 'data-transparentElement';
+    const CANVAS = this.#protObj.get('canvas');
 
-    if (CANVAS.ContextMenu.Open)
-      CANVAS.ContextMenu.close();
+    if (CANVAS.ContextMenu.Open) CANVAS.ContextMenu.close();
 
-    if ((evt.target.hasAttribute(TRANSPARENT) ? evt.srcElement.getAttribute(TRANSPARENT) : false)) {
+    if (evt.target.hasAttribute(TRANSPARENT) ? evt.srcElement.getAttribute(TRANSPARENT) : false) {
       return;
     }
 
-    if (!findTypeInParents(evt.target, "foreignObject", this.#protObj.get("rootElement"))) {
+    if (!Extensions.findTypeInParents(evt.target, 'foreignObject', this.#protObj.get('rootElement'))) {
       it.next(evt);
-      
+
       return;
     }
 
@@ -314,9 +335,9 @@ class BlockNode extends DraggableElement {
   }
 
   #determineMouseUp(it, evt) {
-    if (!findTypeInParents(evt.srcElement, "foreignObject", this.#protObj.get("rootElement"))) {
-      it.next(evt);        
-      
+    if (!Extensions.findTypeInParents(evt.srcElement, 'foreignObject', this.#protObj.get('rootElement'))) {
+      it.next(evt);
+
       return;
     }
 
@@ -325,12 +346,12 @@ class BlockNode extends DraggableElement {
 
   getTotalHeight() {
     const PROT_GET = this.#protObj.get;
-    const HEIGHT = PROT_GET("rect").Height;
-    const CONNECTION = PROT_GET("connections")[0];
+    const HEIGHT = PROT_GET('rect').Height;
+    const CONNECTION = PROT_GET('connections')[0];
 
     if (CONNECTION != null) {
       if (CONNECTION.Node != null) {
-        return HEIGHT + CONNECTION.Node.getTotalHeight()
+        return HEIGHT + CONNECTION.Node.getTotalHeight();
       }
       if (CONNECTION.Accepted) {
         return HEIGHT + CONNECTION.Rect.Height;
@@ -340,261 +361,251 @@ class BlockNode extends DraggableElement {
     return HEIGHT;
   }
 
-  #calculateHeight() {
-    ClassExtension.enforceAbstractMethod("#calculateHeight", "BlockNode");
+  static #calculateHeight() {
+    ClassExtension.enforceAbstractMethod('#calculateHeight', 'BlockNode');
   }
 
   #startDrag(it, evt) {
-    if (this.#protObj.get("draggableArea").CurrentTarget != null)
-      return;
+    if (this.#protObj.get('draggableArea').CurrentTarget != null) return;
 
-    CANVAS.NodeBase.appendChild(this.#protObj.get("rootElement"));
+    this.#protObj.get('canvas').NodeBase.appendChild(this.#protObj.get('rootElement'));
 
     it.next(evt);
   }
 
-  /**************************
-    *          Node          *
-    **************************/
+  /* ************************ *
+   *           Node           *
+   * ************************ */
   getGlobalPosition() {
     const PROT_GET = this.#protObj.get;
 
-    return this.#parent == null ? PROT_GET("rect").Position :
-                                  Vector.add(PROT_GET("rect").Position,
-                                              this.#parent.getGlobalPosition());
-  }
-
-  setNodeMode(nodeMode) {
-    this.#mode = nodeMode;
+    return this.#parent == null
+      ? PROT_GET('rect').Position
+      : Vector.add(PROT_GET('rect').Position, this.#parent.getGlobalPosition());
   }
 
   setParent(parent) {
     this.#parent = parent;
 
     if (parent == null) {
-      CANVAS.NodeBase.appendChild(this.#protObj.get("rootElement"));
+      this.#protObj.get('canvas').NodeBase.appendChild(this.#protObj.get('rootElement'));
       return;
     }
 
-    this.#parent.SVG.appendChild(this.#protObj.get("rootElement"));
+    this.#parent.SVG.appendChild(this.#protObj.get('rootElement'));
   }
 
-  /*******************************
-    *          Draw Node          *
-    *******************************/
+  /* ***************************** *
+   *           Draw Node           *
+   * ***************************** */
 
   #drawNode() {
     const PROT_GET = this.#protObj.get;
-
-    const NC2 = PROT_GET("style").cornerRadius * 2;
-    const SVG = PROT_GET("rootElement");
+    const SVG = PROT_GET('rootElement');
 
     let outer;
     let inner;
 
-    ({outer, inner} = this.#protObj.get("drawHeader").next().value);
-    ({outer, inner} = this.#protObj.get("drawMiddle").next({outer: outer, inner: inner}).value);
-    ({outer, inner} = this.#protObj.get("drawFooter").next({outer: outer, inner: inner}).value);
+    ({ outer, inner } = this.#protObj.get('drawHeader').next().value);
+    ({ outer, inner } = this.#protObj.get('drawMiddle').next({ outer, inner }).value);
+    ({ outer, inner } = this.#protObj.get('drawFooter').next({ outer, inner }).value);
 
     const SVG_BASE = SVG.children;
 
-    SVG_BASE[0].setAttributeNS(null, "d", outer.finalisePath());
-    SVG_BASE[1].setAttributeNS(null, "d", inner.finalisePath());
+    SVG_BASE[0].setAttributeNS(null, 'd', outer.finalisePath());
+    SVG_BASE[1].setAttributeNS(null, 'd', inner.finalisePath());
 
-    if (SVG_BASE.length > 3)
-      SVG_BASE[3].innerHTML = PROT_GET("title");  
+    if (SVG_BASE.length > 3) SVG_BASE[3].innerHTML = PROT_GET('title');
   }
 
   #drawHeader() {
-    const PATH_CONSTANTS = this.#protObj.get("pathConstants");
+    const PATH_CONSTANTS = this.#protObj.get('pathConstants');
 
     return {
       outer: new PathCreator().appendPath(PATH_CONSTANTS.header.outer),
-      inner: new PathCreator().appendPath(PATH_CONSTANTS.header.inner)
+      inner: new PathCreator().appendPath(PATH_CONSTANTS.header.inner),
     };
   }
 
-  #drawMiddle(nodeData) {
-    ClassExtension.enforceAbstractMethod("#drawMiddle", "BlockNode");
+  static #drawMiddle() {
+    ClassExtension.enforceAbstractMethod('#drawMiddle', 'BlockNode');
   }
 
   #drawFooter(nodeData) {
-    const PATH_CONSTANTS = this.#protObj.get("pathConstants");
+    const PATH_CONSTANTS = this.#protObj.get('pathConstants');
 
     return {
-      outer: nodeData.outer.appendPath(PATH_CONSTANTS.footer.outer)
-                            .complete(),
-      inner: nodeData.inner.appendPath(PATH_CONSTANTS.footer.inner)
-                            .complete()
+      outer: nodeData.outer.appendPath(PATH_CONSTANTS.footer.outer).complete(),
+      inner: nodeData.inner.appendPath(PATH_CONSTANTS.footer.inner).complete(),
     };
   }
 
-  /************************************
-    *          Calculate Node          *
-    ************************************/
+  /* ********************************** *
+   *           Calculate Node           *
+   * ********************************** */
 
   #calculatePathConstants() {
-    const STYLE = this.#protObj.get("style");
+    const STYLE = this.#protObj.get('style');
 
-    this.#protObj.set("pathConstants", {
+    this.#protObj.set('pathConstants', {
       header: {
-        outer: this.#calculateHeader(new PathCreator(new Vector(0,
-                                                                STYLE.cornerRadius),
-                                                      Vector.Up),
-                                      0),
-        inner: this.#calculateHeader(new PathCreator(new Vector(STYLE.borderSize,
-                                                                STYLE.cornerRadius),
-                                                      Vector.Up),
-                                      STYLE.borderSize)
+        outer: this.#calculateHeader(new PathCreator(new Vector(0, STYLE.cornerRadius), Vector.Up), 0),
+        inner: this.#calculateHeader(
+          new PathCreator(new Vector(STYLE.borderSize, STYLE.cornerRadius), Vector.Up),
+          STYLE.borderSize
+        ),
       },
       footer: {
         outer: this.#calculateFooter(new PathCreator(Vector.Zero, Vector.Down), 0),
-        inner: this.#calculateFooter(new PathCreator(Vector.Zero, Vector.Down), STYLE.borderSize)
-      }
+        inner: this.#calculateFooter(new PathCreator(Vector.Zero, Vector.Down), STYLE.borderSize),
+      },
     });
   }
 
   #calculateHeader(pathObj, offset) {
     const PROT_GET = this.#protObj.get;
-    const STYLE = PROT_GET("style");
+    const STYLE = PROT_GET('style');
 
     const NC = STYLE.cornerRadius;
     const NC2 = NC * 2;
 
-    PROT_GET("calculateTeeth").next(pathObj.drawRadialCurve(NC - offset, 90),
-                                    offset,
-                                    PROT_GET("rect").Width,
-                                    PROT_GET("connections")[0] == null ? null :
-                                                                          PROT_GET("connections")[0].AcceptableConnections,
-                                    BlockNode.ToothType.INSET).value;
+    PROT_GET('calculateTeeth').next(
+      pathObj.drawRadialCurve(NC - offset, 90),
+      offset,
+      PROT_GET('rect').Width,
+      PROT_GET('connections')[0] == null ? null : PROT_GET('connections')[0].AcceptableConnections,
+      BlockNode.ToothType.INSET
+    );
 
-    return pathObj.drawRadialCurve(NC - offset, 90)
-                  .drawGlobalY(STYLE.headerHeight - NC2);
+    return pathObj.drawRadialCurve(NC - offset, 90).drawGlobalY(STYLE.headerHeight - NC2);
   }
 
   #calculateFooter(pathObj, offset) {
     const PROT_GET = this.#protObj.get;
-    const STYLE = PROT_GET("style");
+    const STYLE = PROT_GET('style');
 
-    const NC = STYLE.cornerRadius; //Node Curve
+    const NC = STYLE.cornerRadius;
 
-    PROT_GET("calculateTeeth").next(pathObj.drawGlobalY(STYLE.footerHeight - (NC * 2))
-                                            .drawRadialCurve(NC - offset, 90),
-                                    offset,
-                                    PROT_GET("rect").Width,
-                                    PROT_GET("returnType"),
-                                    BlockNode.ToothType.OUTSET).value;
-                        
-    return pathObj.drawRadialCurve(NC - offset, 90)
+    PROT_GET('calculateTeeth').next(
+      pathObj.drawGlobalY(STYLE.footerHeight - NC * 2).drawRadialCurve(NC - offset, 90),
+      offset,
+      PROT_GET('rect').Width,
+      PROT_GET('returnType'),
+      BlockNode.ToothType.OUTSET
+    );
+
+    return pathObj.drawRadialCurve(NC - offset, 90);
   }
 
   #calculateTeeth(pathObj, offset, width, flags, toothType) {
-    const STYLE = this.#protObj.get("style");
+    const STYLE = this.#protObj.get('style');
 
-    const NC = STYLE.cornerRadius; //Node Curve
+    const NC = STYLE.cornerRadius;
     const NC2 = NC * 2;
 
-    if (flags == null)
-      return pathObj.drawGlobalX((width - NC2) * toothType);
+    if (flags == null) return pathObj.drawGlobalX((width - NC2) * toothType);
 
-    let commandArray = this.#findTeethPath(flags);
+    const CMD_ARRAY = BlockNode.#findTeethPath(flags);
 
     let total = 0;
     const GAP = 10;
-    let drawCommands = [];
+    const DRAW_CMDS = [];
 
-    const INITIAL_GAP = GAP - (offset * toothType);
-    const INNER_TOOTH = STYLE.toothWidth + (offset * 2 * toothType);
-    const INNER_GAP = INITIAL_GAP - (offset * toothType);
+    const INITIAL_GAP = GAP - offset * toothType;
+    const INNER_TOOTH = STYLE.toothWidth + offset * 2 * toothType;
+    const INNER_GAP = INITIAL_GAP - offset * toothType;
 
-    if (commandArray[0].type == "tooth") {
-      drawCommands.push(new PathCreatorData("drawGlobalX", [INITIAL_GAP * toothType])); 
+    if (CMD_ARRAY[0].type === 'tooth') {
+      DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalX', [INITIAL_GAP * toothType]));
       total += INITIAL_GAP;
     }
 
-    for (let i = 0; i < commandArray.length - 1; i++) {
-      switch (commandArray[i].type) {
-        case "tooth":
-          for (let j = 0; j < commandArray[i].count; j++) {
-            drawCommands.push(new PathCreatorData("drawGlobalY", [STYLE.toothDepth * toothType]));
-            drawCommands.push(new PathCreatorData("drawGlobalX", [INNER_TOOTH * toothType]));
-            drawCommands.push(new PathCreatorData("drawGlobalY", [-(STYLE.toothDepth * toothType)]));
-            
+    for (let i = 0; i < CMD_ARRAY.length - 1; i++) {
+      const HOR_VALUE =
+        GAP +
+        (GAP + STYLE.toothWidth) * CMD_ARRAY[i].count -
+        (offset * toothType + (i === 0 ? 0 : offset * toothType) * toothType);
+
+      switch (CMD_ARRAY[i].type) {
+        case 'tooth':
+          for (let j = 0; j < CMD_ARRAY[i].count; j++) {
+            DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalY', [STYLE.toothDepth * toothType]));
+            DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalX', [INNER_TOOTH * toothType]));
+            DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalY', [-(STYLE.toothDepth * toothType)]));
+
             total += INNER_TOOTH;
 
-            if (j < commandArray[i].count - 1) {
-              drawCommands.push(new PathCreatorData("drawGlobalX", [INNER_GAP * toothType]));
+            if (j < CMD_ARRAY[i].count - 1) {
+              DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalX', [INNER_GAP * toothType]));
               total += INNER_GAP;
             }
           }
           break;
 
-        case "flat":
-          const HOR_VALUE = (GAP + ((GAP + STYLE.toothWidth) * commandArray[i].count)) -
-                          (((offset * toothType) + (i == 0 ? 0 : (offset * toothType)) * toothType));
-          drawCommands.push(new PathCreatorData("drawGlobalX", [HOR_VALUE * toothType]));
+        case 'flat':
+          DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalX', [HOR_VALUE * toothType]));
           total += HOR_VALUE;
           break;
+
+        default:
       }
     }
 
-    const LAST_ELEMENT = commandArray[commandArray.length - 1];
+    const LAST_ELEMENT = CMD_ARRAY[CMD_ARRAY.length - 1];
 
     switch (LAST_ELEMENT.type) {
-      case "tooth":
+      case 'tooth':
         for (let j = 0; j < LAST_ELEMENT.count; j++) {
-          drawCommands.push(new PathCreatorData("drawGlobalY", [STYLE.toothDepth * toothType]));
-          drawCommands.push(new PathCreatorData("drawGlobalX", [INNER_TOOTH * toothType]));
-          drawCommands.push(new PathCreatorData("drawGlobalY", [-(STYLE.toothDepth * toothType)]));
-          
+          DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalY', [STYLE.toothDepth * toothType]));
+          DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalX', [INNER_TOOTH * toothType]));
+          DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalY', [-(STYLE.toothDepth * toothType)]));
+
           total += INNER_TOOTH;
 
           if (j < LAST_ELEMENT.count - 1) {
-            drawCommands.push(new PathCreatorData("drawGlobalX", [INNER_GAP * toothType]));
+            DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalX', [INNER_GAP * toothType]));
             total += INNER_GAP;
           }
         }
-
-      case "flat":
-        drawCommands.push(new PathCreatorData("drawGlobalX", [(width - NC2 - total) * toothType]));
+        DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalX', [(width - NC2 - total) * toothType]));
         break;
-    }
-    
-    if (toothType == BlockNode.ToothType.OUTSET)
-      drawCommands.reverse();
 
-    return pathObj.appendInstructions(drawCommands);
+      case 'flat':
+        DRAW_CMDS.push(new PathCreator.PathCreatorData('drawGlobalX', [(width - NC2 - total) * toothType]));
+        break;
+
+      default:
+    }
+
+    if (toothType === BlockNode.ToothType.OUTSET) DRAW_CMDS.reverse();
+
+    return pathObj.appendInstructions(DRAW_CMDS);
   }
 
-  #findTeethPath(flags) {
-    let commandArray = [];
-    const KEYS = Object.keys(BlockNode.ValueTypes)
-                        .sort((a, b) => BlockNode.ValueTypes[a] - BlockNode.ValueTypes[b]);
+  static #findTeethPath(flags) {
+    const CMD_ARRAY = [];
+    const KEYS = Object.keys(BlockNode.ValueTypes).sort((a, b) => BlockNode.ValueTypes[a] - BlockNode.ValueTypes[b]);
 
     if (flags & BlockNode.ValueTypes.NULL) {
-      commandArray.push({type: "tooth", count: 1});
+      CMD_ARRAY.push({ type: 'tooth', count: 1 });
     } else {
-      commandArray.push({type: "flat", count: 1});
+      CMD_ARRAY.push({ type: 'flat', count: 1 });
     }
 
     for (let i = 1; i < KEYS.length - 1; i++) {
       if (flags & BlockNode.ValueTypes[KEYS[i]]) {
-        const ELEMENT = commandArray[commandArray.length - 1]; 
-        
-        if (ELEMENT.type == "tooth")
-          ELEMENT.count++;
-        else
-          commandArray.push({type: "tooth", count: 1});
+        const ELEMENT = CMD_ARRAY[CMD_ARRAY.length - 1];
+
+        if (ELEMENT.type === 'tooth') ELEMENT.count++;
+        else CMD_ARRAY.push({ type: 'tooth', count: 1 });
       } else {
-        const ELEMENT = commandArray[commandArray.length - 1]; 
-        
-        if (ELEMENT.type == "flat")
-          ELEMENT.count++;
-        else
-          commandArray.push({type: "flat", count: 1});
+        const ELEMENT = CMD_ARRAY[CMD_ARRAY.length - 1];
+
+        if (ELEMENT.type === 'flat') ELEMENT.count++;
+        else CMD_ARRAY.push({ type: 'flat', count: 1 });
       }
     }
 
-    return commandArray;
+    return CMD_ARRAY;
   }
 }

@@ -1,4 +1,6 @@
-class ConnectionPointLayoutEvent extends Event {
+import ConnectionPoint from '../Nodes/ConnectionPoint';
+
+export default class ConnectionPointLayoutEvent extends Event {
   height = 0;
   offset = 0;
 
@@ -10,7 +12,7 @@ class ConnectionPointLayoutEvent extends Event {
    * rootConnectionPoint: ConnectionPoint,
    * sourceConnectionPoint: ConnectionPoint | null,
    * targetNode: BlockNode
-   * }} options 
+   * }} options
    */
   constructor(options) {
     super(ConnectionPoint.UPDATE_CONNECTIONPOINT_LAYOUT);

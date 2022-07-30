@@ -1,0 +1,49 @@
+.contextMenu {
+  position: fixed;
+  z-index: -100;
+  width: 150px;
+  background: #1b1a1a;
+  border-radius: 5px;
+  visibility: hidden;
+}
+
+.contextMenu.visible {
+  visibility: visible;
+}
+
+.contextElement {
+  padding: 8px 10px;
+}
+
+.contextSelectable {
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.contextSelectable:hover {
+  background: #343434;
+}
+
+.contextTitle {
+  font-family: Alice;
+  font-weight: bold;
+  font-size: 15px;
+  color: #eee;
+}
+
+.contextLabelMiddle {
+  text-align: center;
+}
+
+.contextLabelRight {
+  text-align: right;
+}
+
+.contextSeparator {
+  margin: 5px 5px;
+}
+
+.contextSubMenu:after {
+  content: ">";
+  float: right;
+}

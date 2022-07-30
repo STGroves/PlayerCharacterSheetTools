@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alice&display=swap" rel="stylesheet">
+  <head>
+    <base target="_top">
+    <?!= include("DiceRoller_CSS") ?>
+    <?!= include("MacroBuilder_CSS") ?>
+  </head>
+  <body onmousemove="drag(event)" onmouseup="stopDrag(event)">
+    <?!= include("MacroBuilder") ?>
+    <div class="resize" id="resize" draggable="false">
+      <div class="log" id="log" draggable="false">
+      </div>
+      <div class="adjustmentBar" id="bar" onmousemove="startDrag(event)" draggable="false">
+      </div>
+      <div class="macros" id="macros" draggable="false">
+        <div id="editButtonsDiv">
+          <button class="editButton" id="editBtn" onmousedown="showEdit()"/>
+          <button class="editButton" id="closeBtn" onmousedown="closeEdit()"/>
+          <button class="editButton" id="newBtn" onmousedown="createMacro()"/>
+        </div>
+      </div>
+    </div>
+    <input id="textInput" type="text" class="textInput" placeholder="Type here to enter text." onkeypress="evaluateText(event)"/>
+    <?!= include("Extensions_JS") ?>
+    <?!= include("DiceRoller_JS") ?>
+    <?!= include("DiceParser_JS") ?>
+    <?!= include("NodeTree") ?>
+    <?!= include("Node") ?>
+    <?!= include("MacroBuilder_JS") ?>
+  </body>
+</html>

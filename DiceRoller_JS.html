@@ -1,0 +1,120 @@
+  <script>
+    let dragging = false;
+    let editingMacros = false;
+
+    const logElement = document.getElementById("log");
+    const macrosElement = document.getElementById("macros");
+
+    const barHeight = document.getElementById("bar").offsetHeight;
+    const inputHeight = document.getElementById("textInput").offsetHeight;
+    
+    const minLogHeight = convertPropertyValueToNumber(getComputedStyle(logElement).minHeight);
+    const minMacroHeight = convertPropertyValueToNumber(getComputedStyle(macrosElement).minHeight);
+
+    const minY = minLogHeight;
+    const maxY = document.body.offsetHeight - barHeight - minMacroHeight - inputHeight;
+
+    let startY;
+    let logHeight;
+    let macrosHeight;
+
+    async function setup() {
+      try {
+      const resize = document.getElementById("resize");
+      const resizeOffset = document.body.offsetHeight - inputHeight;
+      
+      setPropertyValueInPixels(resize.style, "height", resizeOffset);
+
+      let [result, logsExist] = await Promise.all([promiseRun("getSidebarProperty", "logHeight"), promiseRun("checkForLogs")]);
+
+      if (result == null) {
+        result = resizeOffset - minMacroHeight - barHeight;
+        google.script.run.setSidebarProperty("logHeight", result);
+      }
+      
+      setPropertyValueInPixels(logElement.style, "height", result);
+      setPropertyValueInPixels(macrosElement.style, "height", resizeOffset - result - barHeight);
+
+      //if (!logsExist)
+        //promiseRun("createXml");
+      }
+      catch(error) {
+        console.log(error);
+      }
+    }
+
+    function startDrag(event) {
+      if (dragging || !detectLeftMouse(event))
+        return;
+      dragging = true;
+
+      startY = event.clientY;
+      logHeight = logElement.offsetHeight;
+      macrosHeight = macrosElement.offsetHeight;
+    }
+
+    function stopDrag(event) {
+      dragging = false;
+
+      google.script.run.setSidebarProperty("logHeight", convertPropertyValueToNumber(logElement.style.height));
+    }
+
+    function drag(event) {
+      if (!dragging) {
+        return;
+      }
+
+      if (!detectLeftMouse(event)) {
+        stopDrag(event)
+        return;
+      }
+
+      let deltaY = event.clientY - startY;
+
+      if (logHeight + deltaY > maxY)
+        deltaY = maxY - logHeight;
+
+      if (logHeight + deltaY < minY)
+        deltaY = minY - logHeight;
+
+      setPropertyValueInPixels(logElement.style, "height", logHeight + deltaY);
+      setPropertyValueInPixels(macrosElement.style, "height", macrosHeight - deltaY);
+    }
+
+    function detectLeftMouse(event) {
+      event = event || window.event;
+
+      if ("buttons" in event) {
+        return event.buttons == 1;
+      }
+
+      let button = event.which || event.button;
+      return button == 1;
+    }
+
+    function setPropertyValueInPixels(object, property, value) {
+      object[property] = value + "px";
+    }
+
+    function convertPropertyValueToNumber(value) {
+      return value.substring(0, value.length - 2);
+    }
+
+    function showEdit() {
+      document.getElementById("editBtn").style.display = "none";
+      document.getElementById("newBtn").style.display = "block";
+      document.getElementById("closeBtn").style.display = "block";
+
+      editingMacros = true;
+    }
+
+    function closeEdit() {
+      document.getElementById("editBtn").style.display = "block";
+      document.getElementById("newBtn").style.display = "none";
+      document.getElementById("closeBtn").style.display = "none";
+
+      editingMacros = false;
+    }
+
+    setup();
+  </script>

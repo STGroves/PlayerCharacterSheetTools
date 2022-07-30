@@ -1,0 +1,24 @@
+<script>
+  class Stack {
+    #array
+
+    constructor() { this.#array = []; }
+
+    push(item) { this.#array.push(item); }
+
+    pop(item) { return this.#array.pop(item); }
+
+    isEmpty() { return this.#array.length == 0; }
+
+    get count() { return this.#array.length; }
+
+    peek() { return this.isEmpty() ? undefined : this.#array[this.count - 1]; }
+
+    toString() {
+      if (this.isEmpty())
+        return undefined;
+
+      return this.#array.map(x => x.hasOwnProperty("toString") ? x.toString() : x).join(",\n");
+    }
+  }
+</script>

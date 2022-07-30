@@ -1,0 +1,27 @@
+{
+  "timeZone": "Europe/London",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "Homuli",
+        "version": "0",
+        "libraryId": "1q20hRPTsHCo3Ci6N6aqd90H7Xz2W1cbQ5dDLKs9GRqNmyp0PJobx3dbT",
+        "developmentMode": true
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.scriptapp",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/script.container.ui",
+    "https://www.googleapis.com/auth/drive"
+  ],
+  "addOns": {
+    "common": {
+      "name": "Homuli Character Sheet",
+      "logoUrl": "lol"
+    }
+  }
+}

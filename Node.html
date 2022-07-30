@@ -1,0 +1,61 @@
+<script>
+  class Node {
+    #root;
+    #parent;
+    #children;
+    #htmlElement;
+
+    #categoryIdentifier;
+    #token;
+    #value;
+
+    constructor(parent, element) {
+      this.#children = [];
+      this.#root = parent instanceof NodeTree ? this : parent.root;
+      this.#parent = parent instanceof NodeTree ? null : parent;
+      this.#htmlElement = element;
+    }
+
+    addChildNode(element) {
+      this.#children.push(new Node(this, element));
+    }
+
+    removeChildNode(node) {
+      if (this.#children.includes(node))
+        this.#children.splice(this.#children.indexOf(node), 1);
+    }
+
+    deleteNode() {
+      this.#parent.removeChildNode(this);
+      this.#htmlElement.parentNode.removeChild(this.#htmlElement);
+    }
+
+    findNode(element) {
+      if (element == this.#htmlElement)
+        return this;
+      
+      for (let i = 0; i < this.#children.length; i++) {
+        const foundNode = this.#children[i].findNode(element);
+
+        if (foundNode != null)
+          return foundNode;
+      }
+
+      return null;
+    }
+
+    updateNode(categoryIdentifier, token, value = null) {
+      this.#categoryIdentifier = categoryIdentifier;
+      this.#token = token;
+      this.#value = value == null ? token : value;
+    }
+
+    get root() { return this.#root; }
+    get parent() { return this.#parent; }
+    get children() { return this.#children; }
+    get html() { return this.#htmlElement; }
+    get categoryIdentifier() { return this.#categoryIdentifier; }
+    get token() { return this.#token; }
+    get value() { return this.#value; }
+  }
+</script>

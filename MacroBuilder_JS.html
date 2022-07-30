@@ -1,0 +1,315 @@
+<script>
+   const categoriesEnum = {
+    NONE: "none",
+    SEPARATOR: "separator",
+    VALUE: "value",
+    CONDITION: "condition",
+    FUNCTION: "function",
+    STATE_CHANGE: "stateChange",
+    STATE_END: "stateEnd"
+  };
+
+  const patterns = [
+    {
+      identifier: categoriesEnum.NONE,
+      acceptableCategories: [
+        categoriesEnum.VALUE,
+        categoriesEnum.FUNCTION,
+        categoriesEnum.STATE_CHANGE
+      ]
+    },
+    {
+      identifier: categoriesEnum.VALUE,
+      acceptableCategories: [
+        categoriesEnum.VALUE,
+        categoriesEnum.FUNCTION,
+        categoriesEnum.STATE_CHANGE
+      ]
+    },
+    {
+      identifier: categoriesEnum.FUNCTION,
+      acceptableCategories: [
+        categoriesEnum.VALUE,
+        categoriesEnum.FUNCTION,
+        categoriesEnum.STATE_CHANGE,
+        categoriesEnum.CONDITION
+      ]
+    }
+  ];
+
+  const tokenOptions = [
+    {
+      name: "Calculation",
+      category: categoriesEnum.FUNCTION,
+      prerequisite: function(lastState) {
+        return lastState == null || lastState.value == "Number";
+      }
+    },
+    {
+      name: "Command",
+      category: categoriesEnum.FUNCTION,
+      prerequisite: function(lastState) {
+        return commandOptions.filter(x => x.prerequisite(lastState)).length > 0;
+      }
+    },
+    {
+      name: "Number",
+      category: categoriesEnum.VALUE,
+      prerequisite: function(lastState) {
+        return lastState != null && lastState.value != "Number";
+      }
+    },
+    {
+      name: "Roll Amount",
+      category: categoriesEnum.FUNCTION,
+      prerequisite: function(lastState) {
+        return lastState == null || lastState.value != "Number";
+      }
+    },
+    {
+      name: "Stat",
+      category: categoriesEnum.VALUE
+    },
+    {
+      name: "Text",
+      category: categoriesEnum.VALUE,
+      prerequisite: function(lastState) {
+        return lastState == null || (lastState.token != "Text" && lastState.value != "Calc");
+      }
+    },
+    {
+      name: "Range",
+      category: categoriesEnum.CONDITION,
+      prerequisite: function(lastState) {
+        return lastState != null && lastState.token == "Command";
+      }
+    },
+    {
+      name: "New State",
+      category: categoriesEnum.STATE_CHANGE
+    }
+  ];
+
+  const calculationOptions = [
+    "+",
+    "-",
+    "x",
+    "÷"
+  ];
+
+  const commandOptions = [
+    {
+      name: "Repeat",
+      prerequisite: function(lastState) {
+        return lastState == null || lastState.value == null || lastState.value == "Text";
+      },
+      returnValue: "Array"
+    },
+    {
+      name: "Cancel",
+      prerequisite: function(lastState) {
+        return lastState != null && lastState.value == "Number";
+      },
+      returnValue: "Null"
+    }
+  ];
+
+  function createNodeHTML(element, options) {
+    let div = document.createElement('div');
+    div.style.backgroundColor = "rgba(255,0,0,0.25)";
+
+    const actualOptions = options[0].hasOwnProperty("name") ? options.map(x => x.name) : options;
+
+    let dropdown = createSelectionNode_(actualOptions);
+
+    dropdown.onchange = function(event) { createCommandFields(event); };
+
+    div.appendChild(dropdown);
+    element.appendChild(div);
+
+    return div;
+  }
+
+  const startCategories = patterns.find(x => x.identifier == categoriesEnum.NONE).acceptableCategories;
+  const startOptions = tokenOptions.filter(x => {
+    const prerequisite = x.hasOwnProperty("prerequisite") ? x.prerequisite(null) : true;
+    
+    return startCategories.indexOf(x.category) > -1 && prerequisite
+  });
+
+  const nodeTree = new NodeTree(createNodeHTML(document.getElementById("commandArea"), startOptions));
+
+  let statSelection = async function() {
+    return await promiseRun("getStats");
+  }();
+
+  async function createCommandFields(event) {
+    let source = event.target;
+    const parent = source.parentNode;
+
+    const node = nodeTree.findNode(parent);
+
+    const childArray = [].slice.call(parent.children);
+
+    if (parent.children.length > 1)
+      removeChildren(parent, childArray.findIndex(x => x == source) + 1);
+
+    const tokenData = tokenOptions.find(x => x.name == source.value);
+
+    switch (source.value) {
+      case "Text":
+        let text = document.createElement('input');
+        text.setAttribute("type", "text");
+        parent.appendChild(text);
+
+        node.updateNode(tokenData.category, tokenData.name);
+        break;
+      
+      case "Number":
+        let number = document.createElement('input');
+        number.setAttribute("type", "number");
+        parent.appendChild(number);
+
+        node.updateNode(tokenData.category, tokenData.name);
+        break;
+      
+      case "Calculation": {
+        const calcDropdown = createSelectionNode_(calculationOptions);
+
+        parent.appendChild(calcDropdown);
+
+        node.updateNode(tokenData.category, tokenData.name);
+        break;
+      }
+
+      case "Command": {
+        const options = commandOptions.filter(x => x.prerequisite(lastStateNode)).map(x => x.name);
+        const cmdDropdown = createSelectionNode_(options);
+
+        parent.appendChild(cmdDropdown);
+
+        node.updateNode(tokenData.category, tokenData.name);
+        break;
+      }
+
+      case "Stat": {
+        statSelection.then(result => {
+          const options = result.filter(x => (lastStateNode.token == "Calculation" && x.valueType == "Number") || 
+                                      lastStateNode.token != "Calculation").map(x => x.name);
+          
+          const statsDropdown = createSelectionNode_(options);
+
+          parent.appendChild(statsDropdown);
+
+          node.updateNode(tokenData.category, tokenData.name, result.valueType);
+        });
+        break;
+      }
+
+      case "Roll Amount":
+        let div = document.createElement('div');
+
+        let quantity = document.createElement('input');
+        quantity.setAttribute("type", "number");
+        div.appendChild(quantity);
+
+        let customDie = document.createElement('input');
+        customDie.setAttribute("type", "checkbox");
+        let customDieID = promiseRun("getUUID");
+        customDie.setAttribute("id", customDieID);
+        customDie.onclick = () => {
+          dice.style.display = dice.style.display === "none" ? "block" : "none";
+        };
+        
+        let label = document.createElement('label');
+        let labelText = document.createTextNode("Custom?");
+        label.setAttribute("for", customDieID);
+        label.appendChild(labelText);
+
+        let dice = document.createElement('input');
+        dice.setAttribute("type", "number");
+        dice.style.display = "none";
+
+        div.appendChild(customDie);
+        div.appendChild(label);
+        div.appendChild(dice);
+
+        parent.appendChild(div);
+        break;
+    }
+
+    let btn = document.createElement('button');
+    btn.innerHTML = "Add Command";
+    btn.onclick = function(event) {
+      const categories = patterns.find(x => x.identifier == node.categoryIdentifier).acceptableCategories;
+      const options = tokenOptions.filter(x => categories.indexOf(x.category) > -1 &&
+                                        (x.hasOwnProperty("prerequisite") ? x.prerequisite(node) : true))
+
+      node.addChildNode(createNodeHTML(parent, options));
+      event.target.parentNode.removeChild(event.target);
+
+      console.log(nodeTree);
+    };
+
+    parent.appendChild(btn);
+  }
+
+  function updateStateNode(identifier, token, value) {
+    lastStateNode.identifier = identifier;
+    lastStateNode.token = token;
+    lastStateNode.value = value;
+
+    const categories = patterns.find(x => x.identifier == identifier).acceptableCategories;
+
+    lastStateNode.options = tokenOptions.filter(x => categories.indexOf(x.category) > -1 &&
+                                        (x.hasOwnProperty("prerequisite") ? x.prerequisite(lastStateNode) : true))
+  }
+
+  function createStateNode(lastState = null) {
+    const lastIdentifier = lastState == null ? categoriesEnum.NONE : lastState.identifier;
+    
+    const categories = patterns.find(x => x.identifier == lastIdentifier).acceptableCategories;
+
+    return {
+      identifier: null,
+      token: lastState == null ? "ROOT" : null,
+      value: null,
+      options: tokenOptions.filter(x => categories.indexOf(x.category) > -1 &&
+                                        (x.hasOwnProperty("prerequisite") ? x.prerequisite(lastState) : true))
+    };
+  }
+
+  function removeChildren(parentNode, idx) {
+    let children = parentNode.children;
+
+    console.log(parentNode);
+
+    while (children.length > idx) {
+      console.log(children[idx]);
+      parentNode.removeChild(children[idx]);
+    }
+  }
+
+  function createSelectionNode_(options, includeDefault = true) {
+    let dropdown = document.createElement('select');
+
+    if (includeDefault) {
+      let defaultOption = document.createElement('option');
+      defaultOption.setAttribute("default", true);
+      defaultOption.setAttribute("selected", true);
+      defaultOption.setAttribute("hidden", true);
+      defaultOption.innerHTML = "Choose an Option...";
+
+      dropdown.appendChild(defaultOption);
+    }
+
+    options.forEach((x) => {
+      let option = document.createElement('option');
+      option.value = x;
+      option.innerHTML = x;
+      dropdown.appendChild(option);
+    });
+
+    return dropdown;
+  }
+</script>

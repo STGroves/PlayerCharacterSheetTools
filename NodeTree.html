@@ -1,0 +1,15 @@
+<script>
+  class NodeTree {
+    #root;
+
+    constructor(element) {
+      this.#root = new Node(this, element);
+    };
+
+    findNode(element) {
+      return this.#root.findNode(element);
+    }
+
+    get ROOT() { return this.#root; }
+  }
+</script>

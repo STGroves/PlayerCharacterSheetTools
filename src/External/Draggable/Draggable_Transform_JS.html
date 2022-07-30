@@ -1,0 +1,39 @@
+<!-- <script>
+class Transform {
+  #protObj = null;
+  #parent = null;
+
+  #position = null;
+  #localPosition = null;
+  #rotation = null;
+  #localRotation = null;
+  #scale = null;
+  #localScale = null;
+  #right = null;
+  #up = null;
+
+  get position() { return this.#position; }
+  set position(value) {
+    this.#localposition = position;
+    this.#position = this.#parent == null ? value :
+                                                 Vector.getDirectionVector(value, parent.position) / parent.scale;
+    }
+
+  get rotation() { return this.#rotation; }
+  set rotation(value) {
+    this.#localRotation = value;
+    this.#rotation = this.#parent == null ? rotation :
+
+  constructor(target, position, rotation, scale, parent = null, prot = {}) {
+    if (parent != null && !parent instanceof Transform)
+      throw "Parent must inherit Transform!";
+    
+    this.#parent = parent;
+    
+    this.position = position;
+
+    this.#protObj = ClassExtension.enforceProtectedObject(new.target, Transform, prot)
+      .set("baseElement", target);
+  }
+}
+</script> -->

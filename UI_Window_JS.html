@@ -1,0 +1,11 @@
+<script>
+  class UIWindow extends EventTarget {
+    #protObj = null;
+
+    constuctor(rect, protObj = {}) {
+      super();
+      
+      this.#protObj = ClassExtension.enforceProtectedObject(new.target, UIWindow, prot);
+    }
+  }
+</script>

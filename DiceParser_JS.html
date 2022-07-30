@@ -1,0 +1,14 @@
+<script>
+  const selectTextRegEx = /"(?:\\.|[^"\\])*"/;
+  
+  function evaluateText(event) {
+    if (event.key !== "Enter")
+      return;
+
+    const submission = document.getElementById("textInput").value;
+
+    console.log(submission);
+
+    promiseRun("createLogEntry", submission, "");
+  }
+</script>

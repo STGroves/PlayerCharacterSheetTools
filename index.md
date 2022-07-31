@@ -1,3 +1,4 @@
+<body>
 {% assign doclist = site.pages | sort: 'url'  %}
     <ul>
        {% for doc in doclist %}
@@ -6,3 +7,4 @@
             {% endif %}
         {% endfor %}
     </ul>
+</body>

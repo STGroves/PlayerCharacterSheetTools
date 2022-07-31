@@ -156,7 +156,7 @@ export default class DraggableArea {
   }
 
   #update(evt, target) {
-    const ELEMENTS_LEFT = this.#getDifferences(this.#oldList, this.#currentList);
+    const ELEMENTS_LEFT = DraggableArea.#getDifferences(this.#oldList, this.#currentList);
 
     if (ELEMENTS_LEFT.length > 0) {
       const OUT_EVENT = new PassThroughEvent('pt-mouseout', {
@@ -202,7 +202,7 @@ export default class DraggableArea {
 
     ELEMENTS_LEFT.forEach((x) => x.dispatchEvent(LEAVE_EVENT));
 
-    const ELEMENTS_ENTERED = this.#getDifferences(this.#currentList, this.#oldList);
+    const ELEMENTS_ENTERED = DraggableArea.#getDifferences(this.#currentList, this.#oldList);
 
     if (ELEMENTS_ENTERED.length > 0) {
       const OVER_EVENT = new PassThroughEvent('pt-mouseover', {

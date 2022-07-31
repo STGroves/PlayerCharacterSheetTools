@@ -172,7 +172,7 @@ export default class NodeCanvas extends DraggableElement {
   #spawnNode(NodeType, position) {
     const TRUE_POS = this.#protObj.get('draggableArea').screenToSVG(position);
 
-    const NEW_NODE = new NodeType();
+    const NEW_NODE = new NodeType(this);
 
     NEW_NODE.dispatchEvent(new CustomEvent(BlockNode.NODE_CREATED, null));
 

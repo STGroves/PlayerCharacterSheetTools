@@ -5,12 +5,13 @@ import BlockNode from '../../../External/BlockNode/JS/Nodes/BlockNode.js';
 export default class NumberBlockNode extends ValueBlockNode {
   #protObj = null;
 
-  constructor() {
+  constructor(canvas) {
     ClassExtension.enforceFinalClass(new.target, NumberBlockNode);
 
     const PROT_OBJ = ClassExtension.enforceProtectedObject(new.target, NumberBlockNode, {});
 
     super(
+      canvas,
       'Number',
       BlockNode.ValueTypes.NUMBER,
       BlockNode.ValueTypes.TEXT,

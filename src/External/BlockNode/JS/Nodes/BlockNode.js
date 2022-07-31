@@ -97,7 +97,7 @@ export default class BlockNode extends DraggableElement {
       .set('setupEvents', (it) => this.#setupEvents(it))
       .set('calculateHeight', () => BlockNode.#calculateHeight())
       .set('calculatePathConstants', () => this.#calculatePathConstants())
-      .set('handleConnectionPointUpdate', (_it, event) => this.#handleConnectionPointUpdate(event))
+      .set('handleConnectionPointUpdate', (_it, event) => BlockNode.#handleConnectionPointUpdate(event))
       .set('handleConnectionPointLayoutChange', (_it, event) => this.#handleConnectionPointLayoutChange(event))
       .set('determineMouseDown', (it, evt) => this.#determineMouseDown(it, evt))
       .set('determineMouseUp', (it, evt) => this.#determineMouseUp(it, evt))

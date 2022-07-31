@@ -5,12 +5,12 @@ import BlockNode from '../../../External/BlockNode/JS/Nodes/BlockNode.js';
 export default class RootBlockNode extends FunctionBlockNode {
   #protObj = null;
 
-  constructor() {
+  constructor(canvas) {
     ClassExtension.enforceFinalClass(new.target, RootBlockNode);
 
     const PROT_OBJ = ClassExtension.enforceProtectedObject(new.target, RootBlockNode, {});
 
-    super('Root', null, null, [BlockNode.ValueTypes.ALL], PROT_OBJ);
+    super(canvas, 'Root', null, null, [BlockNode.ValueTypes.ALL], PROT_OBJ);
 
     this.#protObj = PROT_OBJ;
   }

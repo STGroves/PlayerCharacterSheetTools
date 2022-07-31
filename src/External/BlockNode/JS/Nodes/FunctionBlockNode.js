@@ -22,10 +22,10 @@ export default class FunctionBlockNode extends BlockNode {
    * @param {BlockNode.ValueTypes[]} inputTypes
    * @param {ProtectedObject} prot
    */
-  constructor(title, returnType, connectionTypes, inputTypes, prot = {}) {
+  constructor(canvas, title, returnType, connectionTypes, inputTypes, prot = {}) {
     const protObj = ClassExtension.enforceProtectedObject(new.target, FunctionBlockNode, prot);
 
-    super(title, returnType, connectionTypes, prot);
+    super(canvas, title, returnType, connectionTypes, prot);
     this.#protObj = protObj
       .set('onNodeCreated', (it, evt) => this.#onNodeCreated(it, evt))
       .set('handleConnectionPointLayoutChange', (it, event) => this.#handleConnectionPointLayoutChange(it, event))

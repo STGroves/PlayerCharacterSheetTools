@@ -16,7 +16,7 @@ class ValueBlockNode extends BlockNode {
    * @param {{type: string, valueSelection: object}} typeData
    * @param {ProtectedObject} prot
    */
-  constructor(title, returnType, connectionTypes, typeData, prot = {}) {
+  constructor(canvas, title, returnType, connectionTypes, typeData, prot = {}) {
     const PROT_OBJ = ClassExtension.enforceProtectedObject(new.target, ValueBlockNode, prot);
 
     super(title, returnType, connectionTypes, PROT_OBJ);

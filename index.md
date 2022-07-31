@@ -2,7 +2,7 @@
 ---
 <html>
     <body>
-{% assign doclist = site.pages | sort: 'url'  %}
+{% assign doclist = site.pages and site.static_files | sort: 'url' %}
     <ul>
        {% for doc in doclist %}
             {% if doc.name contains '.md' or doc.name contains '.html' or doc.name contains '.js' or doc.name contains '.css'%}

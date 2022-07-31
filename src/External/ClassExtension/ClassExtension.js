@@ -111,6 +111,8 @@ export default class ClassExtension {
   }
 
   static enforceProtectedObject(target, type, reference) {
+    console.log(reference);
+    console.log(ClassExtension.#ProtectedObject());
     return target === type ? ClassExtension.#ProtectedObject() : reference;
   }
 }

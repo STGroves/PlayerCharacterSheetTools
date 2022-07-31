@@ -12,7 +12,7 @@ export default class PathCreator {
 
     return {
       Command: cmd,
-      Params: params,
+      Paramaters: params,
     };
   }
 
@@ -316,7 +316,7 @@ export default class PathCreator {
               Vector.multiply(this.#lastDirection, instruction.Parameters[0])
             );
 
-            const THETA = this.#degToRad(-ANGLE);
+            const THETA = PathCreator.#degToRad(-ANGLE);
             const COS = Math.cos(THETA);
             const SIN = Math.sin(THETA);
 

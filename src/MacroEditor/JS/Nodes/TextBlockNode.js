@@ -1,4 +1,4 @@
-import ValueBlockNode from '../../../External/BlockNode/JS/Nodes/ValueBlockNode.js';
+import { ValueBlockNode, STAT_SELECTION } from '../../../External/BlockNode/JS/Nodes/ValueBlockNode.js';
 import ClassExtension from '../../../External/ClassExtension/ClassExtension.js';
 import BlockNode from '../../../External/BlockNode/JS/Nodes/BlockNode.js';
 
@@ -16,7 +16,7 @@ export default class TextBlockNode extends ValueBlockNode {
       BlockNode.ValueTypes.ALL,
       {
         type: 'Text',
-        valueSelection: ValueBlockNode.STAT_SELECTION.then((result) => {
+        valueSelection: STAT_SELECTION.then((result) => {
           return result.filter((x) => x.valueType === 'Text');
         }),
       },

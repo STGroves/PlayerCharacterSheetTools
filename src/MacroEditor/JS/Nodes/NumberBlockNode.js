@@ -1,4 +1,4 @@
-import ValueBlockNode from '../../../External/BlockNode/JS/Nodes/ValueBlockNode.js';
+import { ValueBlockNode, STAT_SELECTION } from '../../../External/BlockNode/JS/Nodes/ValueBlockNode.js';
 import ClassExtension from '../../../External/ClassExtension/ClassExtension.js';
 import BlockNode from '../../../External/BlockNode/JS/Nodes/BlockNode.js';
 
@@ -16,7 +16,7 @@ export default class NumberBlockNode extends ValueBlockNode {
       BlockNode.ValueTypes.TEXT,
       {
         type: 'Number',
-        valueSelection: ValueBlockNode.STAT_SELECTION,
+        valueSelection: STAT_SELECTION,
       },
       PROT_OBJ
     );

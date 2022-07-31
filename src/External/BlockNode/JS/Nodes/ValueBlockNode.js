@@ -165,4 +165,4 @@ class ValueBlockNode extends BlockNode {
   }
 }
 
-export default { ValueBlockNode, STAT_SELECTION };
+export { ValueBlockNode, STAT_SELECTION };

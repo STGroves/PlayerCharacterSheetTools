@@ -64,7 +64,7 @@ export default class PathCreator {
     const INSTRUCTIONS = this.#instructions;
 
     if (INSTRUCTIONS.length === 0) {
-      INSTRUCTIONS.push(new PathCreator.PathCreatorData(cmd, [value]));
+      INSTRUCTIONS.push(PathCreator.PathCreatorData(cmd, [value]));
       return;
     }
 
@@ -74,14 +74,14 @@ export default class PathCreator {
       LAST.Parameters[0] += value;
 
       if (LAST.Parameters[0] === 0) INSTRUCTIONS.pop();
-    } else INSTRUCTIONS.push(new PathCreator.PathCreatorData(cmd, [value]));
+    } else INSTRUCTIONS.push(PathCreator.PathCreatorData(cmd, [value]));
   }
 
   #handleStaticVectorUpdate(cmd, x, y) {
     const INSTRUCTIONS = this.#instructions;
 
     if (INSTRUCTIONS.length === 0) {
-      INSTRUCTIONS.push(new PathCreator.PathCreatorData(cmd, [x, y]));
+      INSTRUCTIONS.push(PathCreator.PathCreatorData(cmd, [x, y]));
       return;
     }
 
@@ -90,7 +90,7 @@ export default class PathCreator {
     if (LAST.Command === cmd) {
       LAST.Parameters[0] = x;
       LAST.Parameters[1] = y;
-    } else INSTRUCTIONS.push(new PathCreator.PathCreatorData(cmd, [x, y]));
+    } else INSTRUCTIONS.push(PathCreator.PathCreatorData(cmd, [x, y]));
   }
 
   moveTo(x, y) {
@@ -105,7 +105,7 @@ export default class PathCreator {
     const INSTRUCTIONS = this.#instructions;
 
     if (INSTRUCTIONS.length === 0) {
-      INSTRUCTIONS.push(new PathCreator.PathCreatorData(CMD, [x, y]));
+      INSTRUCTIONS.push(PathCreator.PathCreatorData(CMD, [x, y]));
       return this;
     }
 
@@ -114,7 +114,7 @@ export default class PathCreator {
     if (LAST.Command === CMD) {
       LAST.Parameters[0] += x;
       LAST.Parameters[1] += y;
-    } else INSTRUCTIONS.push(new PathCreator.PathCreatorData(CMD, [x, y]));
+    } else INSTRUCTIONS.push(PathCreator.PathCreatorData(CMD, [x, y]));
 
     return this;
   }
@@ -149,7 +149,7 @@ export default class PathCreator {
     const INSTRUCTIONS = this.#instructions;
 
     if (INSTRUCTIONS.length === 0) {
-      INSTRUCTIONS.push(new PathCreator.PathCreatorData(CMD, [x, y]));
+      INSTRUCTIONS.push(PathCreator.PathCreatorData(CMD, [x, y]));
 
       return this;
     }
@@ -164,7 +164,7 @@ export default class PathCreator {
         INSTRUCTIONS.Parameters[0] += x;
         INSTRUCTIONS.Parameters[1] += y;
       }
-    } else INSTRUCTIONS.push(new PathCreator.PathCreatorData(CMD, [x, y]));
+    } else INSTRUCTIONS.push(PathCreator.PathCreatorData(CMD, [x, y]));
 
     return this;
   }
@@ -176,7 +176,7 @@ export default class PathCreator {
     const INSTRUCTIONS = this.#instructions;
 
     if (INSTRUCTIONS.length === 0) {
-      INSTRUCTIONS.push(new PathCreator.PathCreatorData(CMD, [radius, angle]));
+      INSTRUCTIONS.push(PathCreator.PathCreatorData(CMD, [radius, angle]));
 
       return this;
     }
@@ -187,13 +187,13 @@ export default class PathCreator {
       LAST.Parameters[1] += angle;
 
       if (LAST.Parameters[1] === 0) INSTRUCTIONS.pop();
-    } else INSTRUCTIONS.push(new PathCreator.PathCreatorData(CMD, [radius, angle]));
+    } else INSTRUCTIONS.push(PathCreator.PathCreatorData(CMD, [radius, angle]));
 
     return this;
   }
 
   complete() {
-    this.#instructions.push(new PathCreator.PathCreatorData('complete', []));
+    this.#instructions.push(PathCreator.PathCreatorData('complete', []));
     return this;
   }
 

@@ -34,3 +34,5 @@ function getValueType_(value) {
 
   return 'Text';
 }
+
+export default { getStats, removeSheetName_, convertToUsable_, getValueType_ };

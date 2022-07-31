@@ -213,7 +213,6 @@ export default class ConnectionPoint extends EventTarget {
 
     this.#node = evt.hoveringTarget;
 
-    this.#node.setNodeMode(this.#node.NodeMode.INPUT);
     this.#node.setParent(this.#parentNode);
     this.#visual.setAttributeNS(null, 'fill-opacity', 0);
 
@@ -233,7 +232,6 @@ export default class ConnectionPoint extends EventTarget {
 
     const POS = evt.hoveringTarget.getGlobalPosition();
 
-    evt.hoveringTarget.setNodeMode(this.#node.NodeMode.STANDARD);
     evt.hoveringTarget.setParent(null);
 
     this.#parentNode.dispatchEvent(

@@ -75,7 +75,7 @@ export default class NodeCanvas extends DraggableElement {
 
     const DEFS = document.createElementNS(Extensions.SVG_NS, 'defs');
 
-    const SMALL_PATTERN = this.#createPattern({
+    const SMALL_PATTERN = NodeCanvas.#createPattern({
       id: 'smallPattern',
       size: 10,
       colour: 'gray',

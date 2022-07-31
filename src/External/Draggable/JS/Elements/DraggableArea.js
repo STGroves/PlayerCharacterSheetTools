@@ -1,4 +1,4 @@
-import PassThroughEvent from '../Events/PassThroughEvent';
+import PassThroughEvent from '../Events/PassThroughEvent.js';
 
 export default class DraggableArea {
   #selectedTarget = null;

@@ -1,7 +1,7 @@
-import Extensions from '../../../Extensions';
-import Vector from '../../../Vector';
-import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent';
-import ConnectionPointUpdatedEvent from '../Events/ConnectionPointUpdatedEvent';
+import Extensions from '../../../Extensions.js';
+import Vector from '../../../Vector.js';
+import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent.js';
+import ConnectionPointUpdatedEvent from '../Events/ConnectionPointUpdatedEvent.js';
 
 export default class ConnectionPoint extends EventTarget {
   static UPDATE_CONNECTIONPOINT_LAYOUT = 'updateConnectionPointLayout';

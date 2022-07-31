@@ -1,5 +1,5 @@
-import ClassExtension from '../../../ClassExtension/ClassExtension';
-import Vector from '../../../Vector';
+import ClassExtension from '../../../ClassExtension/ClassExtension.js';
+import Vector from '../../../Vector.js';
 
 export default class DraggableElement extends EventTarget {
   #protObj = null;

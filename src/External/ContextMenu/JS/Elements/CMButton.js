@@ -1,6 +1,6 @@
-import ClassExtension from '../../../ClassExtension/ClassExtension';
-import CMSelectable from './CMSelectable';
-import ContextMenu from '../ContextMenu';
+import ClassExtension from '../../../ClassExtension/ClassExtension.js';
+import CMSelectable from './CMSelectable.js';
+import ContextMenu from '../ContextMenu.js';
 
 export default class CMButton extends CMSelectable {
   #callback = null;

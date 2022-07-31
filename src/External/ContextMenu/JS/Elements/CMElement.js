@@ -1,4 +1,4 @@
-import ClassExtension from '../../../ClassExtension/ClassExtension';
+import ClassExtension from '../../../ClassExtension/ClassExtension.js';
 
 export default class CMElement {
   #protObj = null;

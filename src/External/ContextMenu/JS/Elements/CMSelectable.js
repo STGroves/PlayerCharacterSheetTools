@@ -1,5 +1,5 @@
-import ClassExtension from '../../../ClassExtension/ClassExtension';
-import CMTextElement from './CMTextElement';
+import ClassExtension from '../../../ClassExtension/ClassExtension.js';
+import CMTextElement from './CMTextElement.js';
 
 export default class CMSelectable extends CMTextElement {
   #protObj = null;

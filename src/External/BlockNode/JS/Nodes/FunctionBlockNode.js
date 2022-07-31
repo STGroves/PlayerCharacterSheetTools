@@ -1,10 +1,10 @@
-import ClassExtension from '../../../ClassExtension/ClassExtension';
-import BlockNode from './BlockNode';
-import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent';
-import Vector from '../../../Vector';
-import Rect from '../../../Rect';
-import ConnectionPoint from './ConnectionPoint';
-import PathCreator from '../../../PathCreator';
+import ClassExtension from '../../../ClassExtension/ClassExtension.js';
+import BlockNode from './BlockNode.js';
+import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent.js';
+import Vector from '../../../Vector.js';
+import Rect from '../../../Rect.js';
+import ConnectionPoint from './ConnectionPoint.js';
+import PathCreator from '../../../PathCreator.js';
 
 export default class FunctionBlockNode extends BlockNode {
   #protObj = null;

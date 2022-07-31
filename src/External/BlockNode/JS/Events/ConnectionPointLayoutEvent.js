@@ -1,4 +1,4 @@
-import ConnectionPoint from '../Nodes/ConnectionPoint';
+import ConnectionPoint from '../Nodes/ConnectionPoint.js';
 
 export default class ConnectionPointLayoutEvent extends Event {
   height = 0;

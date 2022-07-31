@@ -1,10 +1,10 @@
-import DraggableElement from '../../Draggable/JS/Elements/DraggableElement';
-import DraggableArea from '../../Draggable/JS/Elements/DraggableArea';
-import ClassExtension from '../../ClassExtension/ClassExtension';
-import Vector from '../../Vector';
-import Extensions from '../../Extensions';
-import BlockNode from './Nodes/BlockNode';
-import CM from '../../ContextMenu/index';
+import DraggableElement from '../../Draggable/JS/Elements/DraggableElement.js';
+import DraggableArea from '../../Draggable/JS/Elements/DraggableArea.js';
+import ClassExtension from '../../ClassExtension/ClassExtension.js';
+import Vector from '../../Vector.js';
+import Extensions from '../../Extensions.js';
+import BlockNode from './Nodes/BlockNode.js';
+import CM from '../../ContextMenu/index.js';
 
 // TO-DO: Create Menu Window (Window class?)
 export default class NodeCanvas extends DraggableElement {

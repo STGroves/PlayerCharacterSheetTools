@@ -1,6 +1,6 @@
-import ClassExtension from '../../../ClassExtension/ClassExtension';
-import CMSelectable from './CMSelectable';
-import Vector from '../../../Vector';
+import ClassExtension from '../../../ClassExtension/ClassExtension.js';
+import CMSelectable from './CMSelectable.js';
+import Vector from '../../../Vector.js';
 
 export default class CMSubMenu extends CMSelectable {
   #menu = null;

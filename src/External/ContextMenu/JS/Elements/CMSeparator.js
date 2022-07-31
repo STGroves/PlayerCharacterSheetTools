@@ -1,5 +1,5 @@
-import ClassExtension from '../../../ClassExtension/ClassExtension';
-import CMElement from './CMElement';
+import ClassExtension from '../../../ClassExtension/ClassExtension.js';
+import CMElement from './CMElement.js';
 
 export default class CMSeparator extends CMElement {
   #protObj = null;

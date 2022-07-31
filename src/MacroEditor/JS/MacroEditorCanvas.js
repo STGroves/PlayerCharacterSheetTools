@@ -1,10 +1,10 @@
-import NodeCanvas from '../../External/BlockNode/JS/NodeCanvas';
-import ClassExtension from '../../External/ClassExtension/ClassExtension';
-import Vector from '../../External/Vector';
-import Rect from '../../External/Rect';
-import Extensions from '../../External/Extensions';
-import { ContextMenu, CMSubMenu, CMButton } from '../../External/ContextMenu/index';
-import { CalculationBlockNode, NumberBlockNode, RepeatBlockNode, RootBlockNode, TextBlockNode } from '../index';
+import NodeCanvas from '../../External/BlockNode/JS/NodeCanvas.js';
+import ClassExtension from '../../External/ClassExtension/ClassExtension.js';
+import Vector from '../../External/Vector.js';
+import Rect from '../../External/Rect.js';
+import Extensions from '../../External/Extensions.js';
+import { ContextMenu, CMSubMenu, CMButton } from '../../External/ContextMenu/index.js';
+import { CalculationBlockNode, NumberBlockNode, RepeatBlockNode, RootBlockNode, TextBlockNode } from '../index.js';
 
 class MacroEditorCanvas extends NodeCanvas {
   #protObj = null;

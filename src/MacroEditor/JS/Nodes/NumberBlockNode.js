@@ -1,6 +1,6 @@
-import ValueBlockNode from '../../../External/BlockNode/JS/Nodes/ValueBlockNode';
-import ClassExtension from '../../../External/ClassExtension/ClassExtension';
-import BlockNode from '../../../External/BlockNode/JS/Nodes/BlockNode';
+import ValueBlockNode from '../../../External/BlockNode/JS/Nodes/ValueBlockNode.js';
+import ClassExtension from '../../../External/ClassExtension/ClassExtension.js';
+import BlockNode from '../../../External/BlockNode/JS/Nodes/BlockNode.js';
 
 export default class NumberBlockNode extends ValueBlockNode {
   #protObj = null;

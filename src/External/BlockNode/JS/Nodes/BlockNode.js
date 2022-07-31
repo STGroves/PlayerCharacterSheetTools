@@ -1,12 +1,12 @@
-import ClassExtension from '../../../ClassExtension/ClassExtension';
-import DraggableElement from '../../../Draggable/JS/Elements/DraggableElement';
-import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent';
-import ConnectionPointUpdatedEvent from '../Events/ConnectionPointUpdatedEvent';
-import Vector from '../../../Vector';
-import Rect from '../../../Rect';
-import PathCreator from '../../../PathCreator';
-import ConnectionPoint from './ConnectionPoint';
-import Extensions from '../../../Extensions';
+import ClassExtension from '../../../ClassExtension/ClassExtension.js';
+import DraggableElement from '../../../Draggable/JS/Elements/DraggableElement.js';
+import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent.js';
+import ConnectionPointUpdatedEvent from '../Events/ConnectionPointUpdatedEvent.js';
+import Vector from '../../../Vector.js';
+import Rect from '../../../Rect.js';
+import PathCreator from '../../../PathCreator.js';
+import ConnectionPoint from './ConnectionPoint.js';
+import Extensions from '../../../Extensions.js';
 
 export default class BlockNode extends DraggableElement {
   static NODE_CREATED = 'onNodeCreated';

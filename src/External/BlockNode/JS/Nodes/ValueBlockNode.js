@@ -1,7 +1,7 @@
-import BlockNode from './BlockNode';
-import Extensions from '../../../Extensions';
-import ClassExtension from '../../../ClassExtension/ClassExtension';
-import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent';
+import BlockNode from './BlockNode.js';
+import Extensions from '../../../Extensions.js';
+import ClassExtension from '../../../ClassExtension/ClassExtension.js';
+import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent.js';
 
 const STAT_SELECTION = Extensions.promiseRun('getStats');
 

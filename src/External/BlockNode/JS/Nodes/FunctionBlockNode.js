@@ -4,7 +4,7 @@ import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent.js'
 import Vector from '../../../Vector.js';
 import Rect from '../../../Rect.js';
 import ConnectionPoint from './ConnectionPoint.js';
-import PathCreator from '../../../PathCreator.js';
+import PathCreator from '../../../PathCreator/PathCreator.js';
 
 export default class FunctionBlockNode extends BlockNode {
   #protObj = null;

@@ -4,7 +4,8 @@ import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent.js'
 import ConnectionPointUpdatedEvent from '../Events/ConnectionPointUpdatedEvent.js';
 import Vector from '../../../Vector.js';
 import Rect from '../../../Rect.js';
-import PathCreator from '../../../PathCreator.js';
+import PathCreator from '../../../PathCreator/PathCreator.js';
+import PathCreatorData from '../../../PathCreator/PathCreatorData.js';
 import ConnectionPoint from './ConnectionPoint.js';
 import Extensions from '../../../Extensions.js';
 
@@ -516,7 +517,7 @@ export default class BlockNode extends DraggableElement {
     const INNER_GAP = INITIAL_GAP - offset * toothType;
 
     if (CMD_ARRAY[0].type === 'tooth') {
-      DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalX', [INITIAL_GAP * toothType]));
+      DRAW_CMDS.push(new PathCreatorData('drawGlobalX', [INITIAL_GAP * toothType]));
       total += INITIAL_GAP;
     }
 
@@ -529,21 +530,21 @@ export default class BlockNode extends DraggableElement {
       switch (CMD_ARRAY[i].type) {
         case 'tooth':
           for (let j = 0; j < CMD_ARRAY[i].count; j++) {
-            DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalY', [STYLE.toothDepth * toothType]));
-            DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalX', [INNER_TOOTH * toothType]));
-            DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalY', [-(STYLE.toothDepth * toothType)]));
+            DRAW_CMDS.push(new PathCreatorData('drawGlobalY', [STYLE.toothDepth * toothType]));
+            DRAW_CMDS.push(new PathCreatorData('drawGlobalX', [INNER_TOOTH * toothType]));
+            DRAW_CMDS.push(new PathCreatorData('drawGlobalY', [-(STYLE.toothDepth * toothType)]));
 
             total += INNER_TOOTH;
 
             if (j < CMD_ARRAY[i].count - 1) {
-              DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalX', [INNER_GAP * toothType]));
+              DRAW_CMDS.push(new PathCreatorData('drawGlobalX', [INNER_GAP * toothType]));
               total += INNER_GAP;
             }
           }
           break;
 
         case 'flat':
-          DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalX', [HOR_VALUE * toothType]));
+          DRAW_CMDS.push(new PathCreatorData('drawGlobalX', [HOR_VALUE * toothType]));
           total += HOR_VALUE;
           break;
 
@@ -556,22 +557,22 @@ export default class BlockNode extends DraggableElement {
     switch (LAST_ELEMENT.type) {
       case 'tooth':
         for (let j = 0; j < LAST_ELEMENT.count; j++) {
-          DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalY', [STYLE.toothDepth * toothType]));
-          DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalX', [INNER_TOOTH * toothType]));
-          DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalY', [-(STYLE.toothDepth * toothType)]));
+          DRAW_CMDS.push(new PathCreatorData('drawGlobalY', [STYLE.toothDepth * toothType]));
+          DRAW_CMDS.push(new PathCreatorData('drawGlobalX', [INNER_TOOTH * toothType]));
+          DRAW_CMDS.push(new PathCreatorData('drawGlobalY', [-(STYLE.toothDepth * toothType)]));
 
           total += INNER_TOOTH;
 
           if (j < LAST_ELEMENT.count - 1) {
-            DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalX', [INNER_GAP * toothType]));
+            DRAW_CMDS.push(new PathCreatorData('drawGlobalX', [INNER_GAP * toothType]));
             total += INNER_GAP;
           }
         }
-        DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalX', [(width - NC2 - total) * toothType]));
+        DRAW_CMDS.push(new PathCreatorData('drawGlobalX', [(width - NC2 - total) * toothType]));
         break;
 
       case 'flat':
-        DRAW_CMDS.push(PathCreator.PathCreatorData('drawGlobalX', [(width - NC2 - total) * toothType]));
+        DRAW_CMDS.push(new PathCreatorData('drawGlobalX', [(width - NC2 - total) * toothType]));
         break;
 
       default:

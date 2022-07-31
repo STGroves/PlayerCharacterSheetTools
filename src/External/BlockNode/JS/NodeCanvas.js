@@ -50,7 +50,7 @@ export default class NodeCanvas extends DraggableElement {
       .set('draggableArea', new DraggableArea(this.#protObj.get('rootElement'), NodeCanvas.convertDOMToCanvasSpace))
       .set('transform', this.#nodeParent.transform.baseVal.getItem(0))
       .set('contextMenu', null)
-      .set('createContextMenu', () => NodeCanvas.#createContextMenu())
+      .set('createContextMenu', () => this.#createContextMenu())
       .set('createContextMenuElements', () => NodeCanvas.#createContextMenuElements())
       .set('spawnNode', (_it, nodeType, position) => this.#spawnNode(nodeType, position));
 
@@ -185,7 +185,7 @@ export default class NodeCanvas extends DraggableElement {
     ClassExtension.enforceAbstractMethod('createContextMenuElements', 'NodeCanvas');
   }
 
-  static #createContextMenu() {
+  #createContextMenu() {
     const PROT_GET = this.#protObj.get;
     const ELEMENTS = PROT_GET('createContextMenuElements').next().value;
 

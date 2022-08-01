@@ -19,7 +19,7 @@ class ValueBlockNode extends BlockNode {
   constructor(canvas, title, returnType, connectionTypes, typeData, prot = {}) {
     const PROT_OBJ = ClassExtension.enforceProtectedObject(new.target, ValueBlockNode, prot);
 
-    super(title, returnType, connectionTypes, PROT_OBJ);
+    super(canvas, title, returnType, connectionTypes, PROT_OBJ);
     this.#protObj = PROT_OBJ.set('nodeType', typeData.type)
       .set('valueSelection', typeData.valueSelection)
       .set('createStyle', (it) => this.#createStyle(it))

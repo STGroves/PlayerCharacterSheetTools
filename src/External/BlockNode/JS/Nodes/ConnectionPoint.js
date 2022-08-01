@@ -174,6 +174,8 @@ export default class ConnectionPoint extends EventTarget {
       this.#acceptableConnections
     );
 
+    console.log(evt.hoveringTarget);
+
     if (!this.#acceptableHoveringNode) return;
 
     this.#visual.setAttributeNS(null, 'fill-opacity', 0.5);

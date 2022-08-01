@@ -166,7 +166,7 @@ export default class ConnectionPoint extends EventTarget {
   }
 
   #checkPotentialConnection(evt) {
-    if (evt.hoveringTarget == null || this.#node != null) return;
+    if (evt.hoveringTarget == null || this.#node != null || evt.hoveringTarget === this.#parentNode) return;
 
     this.#acceptableHoveringNode = ConnectionPoint.#isNodeAcceptable(
       this,

@@ -17,7 +17,7 @@ export default class PathCreator {
     if (!(position instanceof Vector) || !(direction instanceof Vector))
       throw new Error('Constructor parameters must be of type Vector');
 
-    // this.offset(position);
+    this.offset(position);
     this.setDirection(direction);
   }
 

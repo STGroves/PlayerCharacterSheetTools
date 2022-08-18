@@ -11,13 +11,13 @@ export default class PathCreator {
    * @param {Vector} position
    * @param {Vector} direction
    */
-  constructor(position = Vector.Zero, direction = Vector.Right) {
+  constructor(position, direction = Vector.Right) {
     this.reset();
 
     if (!(position instanceof Vector) || !(direction instanceof Vector))
       throw new Error('Constructor parameters must be of type Vector');
 
-    this.offset(position);
+    if (position !== Vector.Zero) this.offset(position);
     this.setDirection(direction);
   }
 

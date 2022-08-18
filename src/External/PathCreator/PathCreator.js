@@ -11,11 +11,14 @@ export default class PathCreator {
    * @param {Vector} position
    * @param {Vector} direction
    */
-  constructor(position = null, direction = null) {
+  constructor(position = Vector.Zero, direction = Vector.Right) {
     this.reset();
 
-    if (position != null && !position.equals(Vector.Zero)) this.offset(position.x, position.y);
-    if (direction != null) this.setDirection(direction.x, direction.y);
+    if (!(position instanceof Vector) || !(direction instanceof Vector))
+      throw new Error('Constructor parameters must be of type Vector');
+
+    this.offset(position);
+    this.setDirection(direction);
   }
 
   get Position() {
@@ -40,7 +43,7 @@ export default class PathCreator {
 
   reset() {
     this.#position = Vector.Zero;
-    this.#lastDirection = null;
+    this.#lastDirection = Vector.Right;
     this.#instructions = [];
 
     return this;
@@ -63,50 +66,46 @@ export default class PathCreator {
     } else INSTRUCTIONS.push(new PathCreatorData(cmd, [value]));
   }
 
-  #handleStaticVectorUpdate(cmd, x, y) {
+  #handleStaticVectorUpdate(cmd, vector) {
     const INSTRUCTIONS = this.#instructions;
 
     if (INSTRUCTIONS.length === 0) {
-      INSTRUCTIONS.push(new PathCreatorData(cmd, [x, y]));
+      INSTRUCTIONS.push(new PathCreatorData(cmd, [vector]));
       return;
     }
 
     const LAST = INSTRUCTIONS[INSTRUCTIONS.length - 1];
 
     if (LAST.Command === cmd) {
-      LAST.Parameters[0] = x;
-      LAST.Parameters[1] = y;
-    } else INSTRUCTIONS.push(new PathCreatorData(cmd, [x, y]));
+      LAST.Parameters[0] = vector;
+    } else INSTRUCTIONS.push(new PathCreatorData(cmd, [vector]));
   }
 
-  moveTo(x, y) {
-    this.#handleStaticVectorUpdate('moveTo', x, y);
+  moveTo(vector) {
+    this.#handleStaticVectorUpdate('moveTo', vector);
     return this;
   }
 
-  offset(x, y) {
-    if (x === 0 && y === 0) return this;
-
+  offset(vector) {
     const CMD = 'offset';
     const INSTRUCTIONS = this.#instructions;
 
     if (INSTRUCTIONS.length === 0) {
-      INSTRUCTIONS.push(new PathCreatorData(CMD, [x, y]));
+      INSTRUCTIONS.push(new PathCreatorData(CMD, [vector]));
       return this;
     }
 
     const LAST = INSTRUCTIONS[INSTRUCTIONS.length - 1];
 
     if (LAST.Command === CMD) {
-      LAST.Parameters[0] += x;
-      LAST.Parameters[1] += y;
-    } else INSTRUCTIONS.push(new PathCreatorData(CMD, [x, y]));
+      LAST.Parameters[0] = Vector.add(LAST.Parameters[0], vector);
+    } else INSTRUCTIONS.push(new PathCreatorData(CMD, [vector]));
 
     return this;
   }
 
-  setDirection(x, y) {
-    this.#handleStaticVectorUpdate('setDirection', x, y);
+  setDirection(vector) {
+    this.#handleStaticVectorUpdate('setDirection', vector);
     return this;
   }
 
@@ -130,12 +129,12 @@ export default class PathCreator {
     return this;
   }
 
-  drawLine(x, y) {
+  drawLine(vector) {
     const CMD = 'drawLine';
     const INSTRUCTIONS = this.#instructions;
 
     if (INSTRUCTIONS.length === 0) {
-      INSTRUCTIONS.push(new PathCreatorData(CMD, [x, y]));
+      INSTRUCTIONS.push(new PathCreatorData(CMD, [vector]));
 
       return this;
     }
@@ -143,14 +142,13 @@ export default class PathCreator {
     const LAST = INSTRUCTIONS[INSTRUCTIONS.length - 1];
 
     if (LAST.Command === CMD) {
-      const VEC_OLD = new Vector(LAST.Parameters[0], LAST.Parameters[1]).normalize();
-      const VEC_NEW = new Vector(x, y).normalize();
+      const VEC_OLD = LAST.Parameters[0].normalize();
+      const VEC_NEW = vector.normalize();
 
       if (VEC_OLD.equals(VEC_NEW) || VEC_OLD.equals(VEC_NEW.inverse())) {
-        INSTRUCTIONS.Parameters[0] += x;
-        INSTRUCTIONS.Parameters[1] += y;
+        LAST.Parameters[0] = Vector.add(LAST.Parameters[0], vector);
       }
-    } else INSTRUCTIONS.push(new PathCreatorData(CMD, [x, y]));
+    } else INSTRUCTIONS.push(new PathCreatorData(CMD, [vector]));
 
     return this;
   }
@@ -203,11 +201,11 @@ export default class PathCreator {
   }
 
   finalisePath() {
-    return this.finalisePathWithOffset(0, 0);
+    return this.finalisePathWithOffset(Vector.Zero);
   }
 
-  finalisePathWithOffset(x, y) {
-    this.#position = new Vector(x, y);
+  finalisePathWithOffset(vector) {
+    this.#position = vector;
 
     return this.#instructions
       .map((instruction) => {
@@ -217,8 +215,8 @@ export default class PathCreator {
 
         switch (instruction.Command) {
           case 'moveTo': {
-            this.#position = new Vector(instruction.Parameters[0], instruction.Parameters[1]);
-            this.#lastDirection = null;
+            [this.#position] = instruction.Parameters;
+            this.#lastDirection = Vector.Right;
 
             pathSegment = `M${this.#position.toPathString()}`;
 
@@ -226,11 +224,8 @@ export default class PathCreator {
           }
 
           case 'offset': {
-            this.#position = Vector.add(
-              new Vector(instruction.Parameters[0], instruction.Parameters[1]),
-              this.#position
-            );
-            this.#lastDirection = null;
+            this.#position = Vector.add(instruction.Parameters[0], this.#position);
+            this.#lastDirection = Vector.Right;
 
             pathSegment = `M${this.#position.toPathString()}`;
 
@@ -238,7 +233,7 @@ export default class PathCreator {
           }
 
           case 'setDirection': {
-            this.#lastDirection = new Vector(instruction.Parameters[0], instruction.Parameters[1]).normalize();
+            this.#lastDirection = instruction.Parameters[0].normalize();
 
             break;
           }
@@ -282,10 +277,7 @@ export default class PathCreator {
           }
 
           case 'drawLine': {
-            this.#position = Vector.add(
-              new Vector(instruction.Parameters[0], instruction.Parameters[1]),
-              this.#position
-            );
+            this.#position = Vector.add(instruction.Parameters[0], this.#position);
 
             pathSegment = `L${this.#position.toPathString()}`;
 

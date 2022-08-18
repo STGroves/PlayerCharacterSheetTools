@@ -1,5 +1,5 @@
 import ClassExtension from '../../../ClassExtension/ClassExtension.js';
-import DraggableElement from '../../../Draggable/JS/Elements/DraggableElement.js';
+import DraggableSVGElement from '../../../Draggable/JS/Elements/DraggableSVGElement.js';
 import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent.js';
 import ConnectionPointUpdatedEvent from '../Events/ConnectionPointUpdatedEvent.js';
 import Vector from '../../../Vector.js';
@@ -9,7 +9,7 @@ import PathCreatorData from '../../../PathCreator/PathCreatorData.js';
 import ConnectionPoint from './ConnectionPoint.js';
 import Extensions from '../../../Extensions.js';
 
-export default class BlockNode extends DraggableElement {
+export default class BlockNode extends DraggableSVGElement {
   static NODE_CREATED = 'onNodeCreated';
   static NODE_ADDED = 'onNodeAdded';
   static NODE_UPDATED = 'onNodeUpdated';

@@ -1,4 +1,5 @@
 import PassThroughEvent from '../Events/PassThroughEvent.js';
+import Rect from '../../../Rect.js';
 
 export default class DraggableArea {
   #selectedTarget = null;
@@ -20,8 +21,10 @@ export default class DraggableArea {
     this.#setupEvents(svg);
   }
 
-  getRect() {
-    return this.#dragArea.getBoundingClientRect();
+  getRect(convertToRect = false) {
+    return convertToRect
+      ? Rect.createFromHTMLRect(this.#dragArea.getBoundingClientRect())
+      : this.#dragArea.getBoundingClientRect();
   }
 
   calculateOffset(position, transform) {

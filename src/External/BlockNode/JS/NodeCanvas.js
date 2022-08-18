@@ -1,4 +1,4 @@
-import DraggableElement from '../../Draggable/JS/Elements/DraggableElement.js';
+import DraggableSVGElement from '../../Draggable/JS/Elements/DraggableSVGElement.js';
 import DraggableArea from '../../Draggable/JS/Elements/DraggableArea.js';
 import ClassExtension from '../../ClassExtension/ClassExtension.js';
 import Vector from '../../Vector.js';
@@ -7,7 +7,7 @@ import BlockNode from './Nodes/BlockNode.js';
 import { ContextMenu } from '../../ContextMenu/index.js';
 
 // TO-DO: Create Menu Window (Window class?)
-export default class NodeCanvas extends DraggableElement {
+export default class NodeCanvas extends DraggableSVGElement {
   static get CANVAS_CREATED() {
     return 'onCanvasCreated';
   }
@@ -204,7 +204,7 @@ export default class NodeCanvas extends DraggableElement {
     const CONTEXT_MENU = this.#protObj.get('contextMenu');
     const SCOPED_POS = CONTEXT_MENU.limitPosition(new Vector(evt.clientX, evt.clientY), true);
 
-    CONTEXT_MENU.show(SCOPED_POS, 10000);
+    CONTEXT_MENU.show(SCOPED_POS, ContextMenu.ZINDEX);
   }
 
   /* ************************************* *

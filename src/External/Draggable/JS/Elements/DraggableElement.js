@@ -1,8 +1,10 @@
 import ClassExtension from '../../../ClassExtension/ClassExtension.js';
 import Vector from '../../../Vector.js';
+import Rect from '../../../Rect.js';
 
 export default class DraggableElement extends EventTarget {
   #protObj = null;
+  #startPos = Vector.Zero;
   #allowPassThroughEvents = false;
 
   get RootElement() {
@@ -30,20 +32,15 @@ export default class DraggableElement extends EventTarget {
       .set('rect', rect)
       .set('rootElement', rootElement)
       .set('baseVisualElement', options.baseVisualElement || rootElement)
-      .set('offset', Vector.Zero)
       .set('isDragging', null)
       .set('draggableArea', null)
       .set('setupEvents', (it) => this.#setupEvents(it))
-      .set('updatePosition', (_it, pos) => this.updatePosition(pos))
-      .set('calculateOffset', (_it, pos) => this.#calculateOffset(pos))
-      .set('determineMouseDown', (_it, evt) => this.#determineMouseDown(evt))
-      .set('determineMouseUp', (_it, evt) => this.#determineMouseUp(evt))
-      .set('startDrag', (_it, evt) => this.#startDrag(evt))
-      .set('drag', (_it, evt) => this.#drag(evt))
-      .set('endDrag', (_it, evt) => this.#endDrag(evt));
-
-    this.#protObj.get('rootElement').setAttributeNS(null, 'transform', `translate(0, 0)`);
-    this.#protObj.set('transform', this.#protObj.get('rootElement').transform.baseVal.getItem(0));
+      .set('updatePosition', (_, pos) => this.updatePosition(pos))
+      .set('determineMouseDown', (_, evt) => this.#determineMouseDown(evt))
+      .set('determineMouseUp', (_, evt) => this.#determineMouseUp(evt))
+      .set('startDrag', (_, evt) => this.#startDrag(evt))
+      .set('drag', (_, evt) => this.#drag(evt))
+      .set('endDrag', (_, evt) => this.#endDrag(evt));
   }
 
   #setupEvents() {
@@ -80,35 +77,33 @@ export default class DraggableElement extends EventTarget {
     }
   }
 
-  #calculateOffset(pos) {
-    const DRAG_AREA = this.#protObj.get('draggableArea');
-
-    this.#protObj.set('offset', DRAG_AREA.calculateOffset(DRAG_AREA.screenToSVG(pos), this.#protObj.get('transform')));
-  }
-
   #startDrag(evt) {
-    const POS = new Vector(evt.clientX, evt.clientY);
-
-    this.#protObj.get('calculateOffset').next(POS);
+    this.#startPos = new Vector(evt.clientX, evt.clientY);
     this.#protObj.set('isDragging', true);
-
     this.#protObj.get('draggableArea').setTarget(this);
   }
 
   #calculatePosition(pos) {
     const PROT_GET = this.#protObj.get;
 
-    const CO_ORDS = PROT_GET('draggableArea').screenToSVG(pos);
-    const NEW_POS = Vector.subtract(CO_ORDS, PROT_GET('offset'));
+    const DELTA = Vector.subtract(pos - this.#startPos);
+    const DRAG_AREA = PROT_GET('draggableArea');
+    const RECT = PROT_GET('rect');
 
-    this.#protObj.get('updatePosition').next(NEW_POS);
+    const LIMITED_POS = Rect.limit(
+      DRAG_AREA.getRect(true),
+      new Rect(RECT.X + DELTA.x, RECT.Y + DELTA.y, RECT.WIDTH, RECT.HEIGHT)
+    );
 
-    return NEW_POS;
+    PROT_GET.get('updatePosition').next(LIMITED_POS);
+
+    return LIMITED_POS;
   }
 
   updatePosition(pos) {
     const PROT_GET = this.#protObj.get;
-    PROT_GET('transform').setTranslate(pos.x, pos.y);
+    PROT_GET('rootElement').style.top = pos.y;
+    PROT_GET('rootElement').style.left = pos.x;
     PROT_GET('rect').setPosition(pos);
   }
 

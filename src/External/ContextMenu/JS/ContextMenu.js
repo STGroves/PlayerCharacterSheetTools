@@ -9,6 +9,10 @@ export default class ContextMenu {
     RIGHT: 1,
   };
 
+  static get ZINDEX() {
+    return 10000;
+  }
+
   #html = null;
   #zIndex = null;
 

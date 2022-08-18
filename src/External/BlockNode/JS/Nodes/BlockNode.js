@@ -413,6 +413,8 @@ export default class BlockNode extends DraggableSVGElement {
 
     const SVG_BASE = SVG.children;
 
+    console.log(outer);
+
     SVG_BASE[0].setAttributeNS(null, 'd', outer.finalisePath());
     SVG_BASE[1].setAttributeNS(null, 'd', inner.finalisePath());
 

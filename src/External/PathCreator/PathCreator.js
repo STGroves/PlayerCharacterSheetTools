@@ -11,7 +11,7 @@ export default class PathCreator {
    * @param {Vector} position
    * @param {Vector} direction
    */
-  constructor(position, direction = Vector.Right) {
+  constructor(position = Vector.Zero, direction = Vector.Right) {
     this.reset();
 
     if (!(position instanceof Vector) || !(direction instanceof Vector))

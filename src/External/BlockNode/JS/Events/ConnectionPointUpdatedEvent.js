@@ -1,6 +1,8 @@
-import ConnectionPoint from '../Nodes/ConnectionPoint.js';
-
 export default class ConnectionPointUpdatedEvent extends Event {
+  static get CONNECTIONPOINT_UPDATED() {
+    return 'connectionPointUpdated';
+  }
+
   static get UpdateType() {
     return {
       NODE_ADDED: 0,
@@ -24,7 +26,7 @@ export default class ConnectionPointUpdatedEvent extends Event {
    * }} options
    */
   constructor(options) {
-    super(ConnectionPoint.CONNECTIONPOINT_UPDATED);
+    super(ConnectionPointUpdatedEvent.CONNECTIONPOINT_UPDATED);
 
     this.rootConnectionPoint = options.rootConnectionPoint;
     this.sourceConnectionPoint = options.sourceConnectionPoint || options.rootConnectionPoint;

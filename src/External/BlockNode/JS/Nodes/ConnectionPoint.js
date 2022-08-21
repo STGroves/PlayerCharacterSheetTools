@@ -3,10 +3,7 @@ import Vector from '../../../Vector.js';
 import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent.js';
 import ConnectionPointUpdatedEvent from '../Events/ConnectionPointUpdatedEvent.js';
 
-export default class ConnectionPoint extends EventTarget {
-  static UPDATE_CONNECTIONPOINT_LAYOUT = 'updateConnectionPointLayout';
-  static CONNECTIONPOINT_UPDATED = 'connectionPointUpdated';
-
+export class ConnectionPoint extends EventTarget {
   static get ConnectorTypes() {
     return {
       OUTPUT: -1,
@@ -43,7 +40,7 @@ export default class ConnectionPoint extends EventTarget {
       this.#svg.setAttributeNS(null, 'id', this.#id);
     });
 
-    this.addEventListener(ConnectionPoint.UPDATE_CONNECTIONPOINT_LAYOUT, (event) =>
+    this.addEventListener(ConnectionPointLayoutEvent.UPDATE_CONNECTIONPOINT_LAYOUT, (event) =>
       this.#updateRectHeight(event.height < 0 ? this.#defaultHeight : event.height)
     );
     this.#createSVG();

@@ -1,8 +1,10 @@
-import ConnectionPoint from '../Nodes/ConnectionPoint.js';
-
 export default class ConnectionPointLayoutEvent extends Event {
   height = 0;
   offset = 0;
+
+  static get UPDATE_CONNECTIONPOINT_LAYOUT() {
+    return 'updateConnectionPointLayout';
+  }
 
   /**
    * @constructor
@@ -15,7 +17,7 @@ export default class ConnectionPointLayoutEvent extends Event {
    * }} options
    */
   constructor(options) {
-    super(ConnectionPoint.UPDATE_CONNECTIONPOINT_LAYOUT);
+    super(ConnectionPointLayoutEvent.UPDATE_CONNECTIONPOINT_LAYOUT);
 
     this.height = options.height;
     this.offset = options.offset;

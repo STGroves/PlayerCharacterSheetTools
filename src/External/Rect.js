@@ -28,10 +28,6 @@ export default class Rect {
     this.#height = height;
   }
 
-  static createFromHTMLRect(rect) {
-    return new Rect(rect.x, rect.y, rect.width, rect.height);
-  }
-
   get Top() {
     return this.#y;
   }
@@ -72,8 +68,8 @@ export default class Rect {
     return this.#height;
   }
 
-  static equals(rect, otherRect) {
-    return Vector.equals(rect.Position, otherRect.Position) && Vector.equals(rect.Dimensions, otherRect.Dimensions);
+  static createFromHTMLRect(rect) {
+    return new Rect(rect.x, rect.y, rect.width, rect.height);
   }
 
   static limit(bounds, target, limitType = Rect.LimitType.All) {
@@ -135,6 +131,10 @@ export default class Rect {
     const BOTTOM = target.Bottom > bounds.Top && target.Bottom < bounds.Bottom;
 
     return (LEFT && TOP) || (RIGHT && TOP) || (LEFT && BOTTOM) || (RIGHT && BOTTOM);
+  }
+
+  equals(other) {
+    return this.Position.equals(other.Position) && this.Dimensions.equals(other.Dimensions);
   }
 
   setPosition(pos) {

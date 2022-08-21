@@ -1,11 +1,95 @@
 <html>
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
     body {
-      background-image: url('./resources/GitHub\ Pages/Background\ Wall.png');
+      background-image: url('https://stgroves.github.io/PlayerCharacterSheetTools/resources/GitHub%20Pages/Background%20Wall.png');
       background-repeat: repeat;
+      margin: 0;
+    }
+    
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #header {
+      height: 100px;
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 0;
+    }
+    
+    #websiteLogo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100px;
+      width: 100px;
+    }
+    
+    #title {
+      height: 60px;
+    }
+    
+    #menu {
+      position: relative;
+      box-sizing: border-box;
+      width: -moz-fit-content;
+      width: fit-content;
+      height: -moz-fit-content;
+      height: fit-content;
+      top: -15px;
+      bottom: 0;
+      padding: 0;
+      border: 15px solid transparent;
+      border-image: url("https://stgroves.github.io/PlayerCharacterSheetTools/resources/GitHub%20Pages/MenuBorder.png");
+      border-image-slice: 330;
+      border-image-repeat: round;
+      background-image: url("https://stgroves.github.io/PlayerCharacterSheetTools/resources/GitHub%20Pages/MenuBackground.png");
+      background-image-repeat: round;
+      background-clip: padding-box;
+      background-size: contain;
+    }
+    
+    #menuCorner {
+      position: relative;
+      top: -15px;
+      left: -15px;
+      bottom: 0;
+      right: 0;
+      width: -moz-fit-content;
+      width: fit-content;
+      height: -moz-fit-content;
+      height: fit-content;
+      border: 15px solid transparent;
+      border-image: url("https://stgroves.github.io/PlayerCharacterSheetTools/resources/GitHub%20Pages/MenuBorderCorners.png");
+      border-image-slice: 330;
+      border-image-repeat: round;
     }
   </style>
     <body>
-      <h1>Welcome to the Player Character Sheet Tools</h1>
+      <div class="center" style="bottom: 0;">
+        <div id="header">
+          <img id="websiteLogo" src="https://stgroves.github.io/PlayerCharacterSheetTools/resources/GitHub%20Pages/Website%20Logo.png"/>
+          <img id="title" src="https://stgroves.github.io/PlayerCharacterSheetTools/resources/GitHub%20Pages/Title.png"/>
+        </div>
+        <div id="menu">
+          <div id="menuCorner">
+            <button>Test</button>
+          </div>
+        </div>
+      </div>
     </body>
 </html>

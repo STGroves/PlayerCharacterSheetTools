@@ -32,6 +32,50 @@ export default class Rect {
     return new Rect(rect.x, rect.y, rect.width, rect.height);
   }
 
+  get Top() {
+    return this.#y;
+  }
+  get Left() {
+    return this.#x;
+  }
+  get Bottom() {
+    return this.#y + this.#height;
+  }
+  get Right() {
+    return this.#x + this.#width;
+  }
+
+  get TopLeft() {
+    return new Vector(this.#x, this.#y);
+  }
+  get BottomRight() {
+    return new Vector(this.Right, this.Bottom);
+  }
+
+  get Position() {
+    return new Vector(this.#x, this.#y);
+  }
+  get Dimensions() {
+    return new Vector(this.#width, this.#height);
+  }
+
+  get X() {
+    return this.#x;
+  }
+  get Y() {
+    return this.#y;
+  }
+  get Width() {
+    return this.#width;
+  }
+  get Height() {
+    return this.#height;
+  }
+
+  static equals(rect, otherRect) {
+    return Vector.equals(rect.Position, otherRect.Position) && Vector.equals(rect.Dimensions, otherRect.Dimensions);
+  }
+
   static limit(bounds, target, limitType = Rect.LimitType.All) {
     const VALID_X = bounds.Width >= target.Width;
     const VALID_Y = bounds.Height >= target.Height;
@@ -101,45 +145,5 @@ export default class Rect {
   setDimensions(dims) {
     this.#width = dims.x;
     this.#height = dims.y;
-  }
-
-  get Top() {
-    return this.#y;
-  }
-  get Left() {
-    return this.#x;
-  }
-  get Bottom() {
-    return this.#y + this.#height;
-  }
-  get Right() {
-    return this.#x + this.#width;
-  }
-
-  get TopLeft() {
-    return new Vector(this.#x, this.#y);
-  }
-  get BottomRight() {
-    return new Vector(this.Right, this.Bottom);
-  }
-
-  get Position() {
-    return new Vector(this.#x, this.#y);
-  }
-  get Dimensions() {
-    return new Vector(this.#width, this.#height);
-  }
-
-  get X() {
-    return this.#x;
-  }
-  get Y() {
-    return this.#y;
-  }
-  get Width() {
-    return this.#width;
-  }
-  get Height() {
-    return this.#height;
   }
 }

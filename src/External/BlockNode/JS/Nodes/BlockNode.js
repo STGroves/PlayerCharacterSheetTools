@@ -98,18 +98,18 @@ export default class BlockNode extends DraggableSVGElement {
       .set('setupEvents', (it) => this.#setupEvents(it))
       .set('calculateHeight', () => BlockNode.#calculateHeight())
       .set('calculatePathConstants', () => this.#calculatePathConstants())
-      .set('handleConnectionPointUpdate', (_it, event) => BlockNode.#handleConnectionPointUpdate(event))
-      .set('handleConnectionPointLayoutChange', (_it, event) => this.#handleConnectionPointLayoutChange(event))
+      .set('handleConnectionPointUpdate', (_, event) => BlockNode.#handleConnectionPointUpdate(event))
+      .set('handleConnectionPointLayoutChange', (_, event) => this.#handleConnectionPointLayoutChange(event))
       .set('determineMouseDown', (it, evt) => this.#determineMouseDown(it, evt))
       .set('determineMouseUp', (it, evt) => this.#determineMouseUp(it, evt))
       .set('drawNode', () => this.#drawNode())
       .set('drawHeader', () => this.#drawHeader())
       .set('drawMiddle', () => BlockNode.#drawMiddle())
-      .set('drawFooter', (_it, nodeData) => this.#drawFooter(nodeData))
-      .set('calculateTeeth', (_it, pathObj, offset, width, flags, toothType) =>
+      .set('drawFooter', (_, nodeData) => this.#drawFooter(nodeData))
+      .set('calculateTeeth', (_, pathObj, offset, width, flags, toothType) =>
         this.#calculateTeeth(pathObj, offset, width, flags, toothType)
       )
-      .set(BlockNode.NODE_CREATED, (_it, evt) => this.#onNodeCreated(evt));
+      .set(BlockNode.NODE_CREATED, (_, evt) => this.#onNodeCreated(evt));
 
     this.#connectionFlags = connectionTypes;
     this.#id = Extensions.promiseRun('getUUID');
@@ -412,8 +412,6 @@ export default class BlockNode extends DraggableSVGElement {
     ({ outer, inner } = this.#protObj.get('drawFooter').next({ outer, inner }).value);
 
     const SVG_BASE = SVG.children;
-
-    console.log(outer);
 
     SVG_BASE[0].setAttributeNS(null, 'd', outer.finalisePath());
     SVG_BASE[1].setAttributeNS(null, 'd', inner.finalisePath());

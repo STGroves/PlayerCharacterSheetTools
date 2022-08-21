@@ -3,7 +3,7 @@ import Vector from '../../../Vector.js';
 import ConnectionPointLayoutEvent from '../Events/ConnectionPointLayoutEvent.js';
 import ConnectionPointUpdatedEvent from '../Events/ConnectionPointUpdatedEvent.js';
 
-export class ConnectionPoint extends EventTarget {
+export default class ConnectionPoint extends EventTarget {
   static get ConnectorTypes() {
     return {
       OUTPUT: -1,

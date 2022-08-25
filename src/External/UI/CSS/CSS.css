@@ -1,0 +1,38 @@
+.window {
+  background-color: yellow;
+}
+
+.windowTitle {
+  float: left;
+  text-align: center;
+}
+
+.menuBar {
+  background-color: grey;
+}
+
+.closeBar {
+  float: right;
+  box-sizing: border-box; 
+}
+
+.closeBarBtn {
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 2px;
+  margin: 0;
+  border: 1px solid #202020;
+  background-color: lightGrey;
+}
+
+.closeBtn {
+  content: url("https://stgroves.github.io/PlayerCharacterSheetTools/resources/UIWindow/Close.png");
+}
+
+.maximiseBtn {
+  content: url("https://stgroves.github.io/PlayerCharacterSheetTools/resources/UIWindow/Maximise.png");
+}
+
+.minimiseBtn {
+  content: url("https://stgroves.github.io/PlayerCharacterSheetTools/resources/UIWindow/Minimise.png");
+}
